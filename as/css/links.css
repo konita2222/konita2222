@@ -1,0 +1,126 @@
+:root {
+    --neon-green: #00ff00;
+    --error-red: #ff0000;
+    --dark-bg: #000;
+    --font-pixel: 'Press Start 2P', cursive;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--neon-green);
+    font-family: var(--font-pixel);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+    overflow-x: hidden;
+}
+
+/* 走査線 */
+.monitor-line {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.glitch-title {
+    font-size: 1.2rem;
+    text-shadow: 2px 0 var(--error-red);
+    margin-bottom: 5px;
+}
+
+.status-msg {
+    font-size: 0.6rem;
+    margin-bottom: 40px;
+    color: #555;
+}
+
+.link-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.link-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid var(--neon-green);
+    text-decoration: none;
+    color: var(--neon-green);
+    transition: 0.2s;
+    position: relative;
+}
+
+.link-item .code { font-size: 0.5rem; color: #555; }
+.link-item .label { font-size: 0.8rem; }
+
+/* ホバー時のバグ演出 */
+.link-item:hover {
+    background-color: var(--neon-green);
+    color: black;
+    transform: translateX(10px);
+    box-shadow: -5px 0 var(--error-red);
+}
+
+.link-item:hover .code { color: black; }
+
+/* 特別なリンク（隠しページなど） */
+.link-item.special {
+    border-color: var(--error-red);
+    color: var(--error-red);
+}
+
+.link-item.special:hover {
+    background-color: var(--error-red);
+    color: white;
+    box-shadow: -5px 0 white;
+}
+
+.back-btn {
+    margin-top: 50px;
+    background: transparent;
+    border: none;
+    color: #333;
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    color: var(--error-red);
+}
+/* 汚染されたリンクのスタイル */
+.link-item.corrupted {
+    border-color: #ff0000;
+    position: relative;
+    overflow: hidden;
+}
+
+.link-item.corrupted::after {
+    content: "UNSTABLE SIGNAL";
+    position: absolute;
+    right: 10px;
+    font-size: 0.4rem;
+    color: #ff0000;
+    animation: blink 0.5s infinite;
+}
+
+.risk-level {
+    font-size: 0.5rem;
+    background: #ff0000;
+    color: #000;
+    padding: 2px 5px;
+    margin-left: 10px;
+}

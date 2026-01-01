@@ -1,0 +1,113 @@
+:root {
+    --accent: #00f2ff;
+    --danger: #ff0044;
+    --font-main: 'Outfit', 'Noto Sans JP', sans-serif;
+    --font-pixel: 'Press Start 2P', cursive;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: var(--font-main);
+    margin: 0;
+    overflow-x: hidden;
+    background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
+}
+
+.viewport {
+    padding: 10vh 10vw;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* 666カウント */
+.iteration-count {
+    font-family: var(--font-pixel);
+    font-size: 0.7rem;
+    color: var(--danger);
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+/* セリフ全体の演出 */
+.sans-dialogue-section {
+    margin-top: 15vh;
+}
+
+.dialogue-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.dialogue-line {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #888;
+    transition: 0.5s;
+    cursor: default;
+}
+
+.dialogue-line:hover {
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* 最後の致命的なセリフ：バグと消失 */
+.critical-glitch {
+    color: var(--accent);
+    font-family: var(--font-pixel);
+    font-size: 1rem;
+    line-height: 2;
+    margin-top: 3rem;
+    position: relative;
+    animation: disappear 6s infinite ease-in-out;
+}
+
+@keyframes disappear {
+    0%, 20% { opacity: 1; filter: blur(0); letter-spacing: 0; }
+    50% { opacity: 0.3; filter: blur(4px); letter-spacing: 5px; transform: scale(1.05); }
+    80%, 100% { opacity: 0; filter: blur(12px); letter-spacing: 20px; }
+}
+
+/* モダンなスタッフタグ */
+.action-footer {
+    margin-top: 20vh;
+    padding-top: 40px;
+    border-top: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.staff-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.staff-tag span {
+    font-family: var(--font-pixel);
+    font-size: 0.4rem;
+    color: #444;
+    margin-right: 10px;
+}
+
+/* ボタン：超ミニマルモダン */
+.btn-modern {
+    color: var(--danger);
+    text-decoration: none;
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--danger);
+    transition: 0.3s;
+}
+
+.btn-modern:hover {
+    letter-spacing: 3px;
+    padding-right: 20px;
+    color: #fff;
+    border-bottom-color: #fff;
+}
