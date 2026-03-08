@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>1,2,テトリス</title>
+<!-- デジタル・サイバー風のフォントを読み込み -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+    /* --- 全体のスタイルと背景 --- */
+    body {
+        background-color: #020202;
+        background-image: radial-gradient(circle at center, #111 0%, #000 100%);
+        color: white;
+        font-family: 'Orbitron', sans-serif;
+        margin: 0;
+        overflow: hidden;
+        transition: background-image 1s, background-color 1s;
+    }
+
+    /* ブラウン管のようなスキャンライン（走査線）エフェクト */
+    body::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+    }
+
+    /* 画面切り替え用の共通クラス */
+    .screen {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        z-index: 10;
+    }
+
+    .screen.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* =========================================
+       スタート画面（不気味なサイバーホラー調）
+       ========================================= */
+    body.start-mode {
+        background-color: #050000;
+        background-image: radial-gradient(circle at center, #300 0%, #000 100%);
+    }
+
+    /* 不気味な明滅エフェクト */
+    body.start-mode::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        animation: horror-flicker 4s infinite;
+        z-index: 99;
+    }
+
+    @keyframes horror-flicker {
+        0%, 88%, 100% { background: rgba(0, 0, 0, 0); }
+        90% { background: rgba(255, 0, 0, 0.1); }
+        92% { background: rgba(0, 0, 0, 0.8); }
+        94% { background: rgba(255, 0, 0, 0.05); }
+        96% { background: rgba(0, 0, 0, 0.9); }
+    }
+
+    /* タイトルのグリッチ（バグ）エフェクト */
+    .title-logo {
+        font-size: 65px;
+        font-weight: 900;
+        color: #ff0d39;
+        text-shadow: 0 0 15px #ff0d39, 0 0 30px #80001d;
+        margin-bottom: 50px;
+        letter-spacing: 8px;
+        animation: glitch-text 3.5s infinite;
+    }
+
+    @keyframes glitch-text {
+        0%, 90%, 100% { transform: none; color: #ff0d39; text-shadow: 0 0 15px #ff0d39; }
+        92% { transform: translate(4px, 2px) skewX(15deg); color: #fff; text-shadow: -3px 0 #0dc2ff, 3px 0 #0dff72; }
+        94% { transform: translate(-4px, -2px) skewX(-15deg); color: #ff0d39; }
+        96% { transform: translate(2px, -3px) skewX(5deg); color: #fff; text-shadow: 3px 0 #0dc2ff, -3px 0 #ff0d72; }
+    }
+
+    .start-btn {
+        background: rgba(20, 0, 0, 0.5);
+        color: #ff0d39;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        border: 2px solid #ff0d39;
+        padding: 15px 40px;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 15px rgba(255, 13, 57, 0.3), inset 0 0 10px rgba(255, 13, 57, 0.3);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        z-index: 20;
+    }
+
+    .start-btn:hover {
+        background: #ff0d39;
+        color: #000;
+        box-shadow: 0 0 30px #ff0d39, inset 0 0 20px #ff0d39;
+        animation: glitch-text 0.2s infinite; /* ホバーで激しくバグる */
+    }
+
+    .menu-controls {
+        margin-top: 40px;
+        text-align: center;
+        color: #888;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 13px;
+        line-height: 2.2;
+    }
+    .menu-controls b { color: #ff0d39; font-family: 'Orbitron', sans-serif; font-size: 15px; }
+
+
+    /* =========================================
+       ゲーム画面
+       ========================================= */
+    .container {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+    }
+
+    #game-wrapper {
+        position: relative;
+        width: 300px;
+        height: 600px;
+    }
+
+    canvas { display: block; }
+
+    /* CSS変数（通常時と覚醒時のベーススタイル管理） */
+    :root {
+        --base-shadow: 0 0 20px rgba(0,0,0,0.8);
+        --base-border: #222;
+        --base-bg: rgba(10, 10, 10, 0.9);
+        --panel-border: #333;
+    }
+
+    /* ネオン覚醒時 */
+    body.neon-mode {
+        background-color: #020202;
+        background-image: radial-gradient(circle at center, #1a0b2e 0%, #000 100%);
+    }
+    body.neon-mode #tetris {
+        --base-shadow: 0 0 40px rgba(13, 194, 255, 0.15), 0 0 10px rgba(255, 13, 114, 0.15);
+        --base-border: #444;
+        --panel-border: #555;
+    }
+
+    #tetris {
+        background-color: var(--base-bg);
+        border: 2px solid var(--base-border);
+        border-radius: 8px;
+        box-shadow: var(--base-shadow);
+        transition: border-color 0.5s, box-shadow 0.5s, background-color 0.5s;
+    }
+
+    /* サイドパネル */
+    .side-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 190px;
+    }
+
+    .box {
+        background: rgba(10, 10, 10, 0.8);
+        border: 1px solid var(--panel-border);
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
+        transition: border-color 0.5s;
+    }
+
+    .box-title {
+        color: #0DC2FF;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        margin-bottom: 8px;
+        text-shadow: 0 0 8px rgba(13, 194, 255, 0.5);
+    }
+
+    .value-text {
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    /* プレイ中の操作説明 */
+    .controls {
+        font-size: 11px;
+        color: #888;
+        line-height: 2;
+        text-align: left;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .controls b { 
+        color: #0DFF72;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+    }
+
+    /* エフェクト用テキスト */
+    #effect-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    #effect-text {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 900;
+        opacity: 0;
+        transform: scale(0.5);
+        letter-spacing: 2px;
+    }
+
+    .show-effect { animation: pop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    
+    @keyframes pop {
+        0% { opacity: 0; transform: scale(0.5) translateY(30px); }
+        15% { opacity: 1; transform: scale(1.1) translateY(0); }
+        70% { opacity: 1; transform: scale(1) translateY(0); }
+        100% { opacity: 0; transform: scale(0.8) translateY(-30px); }
+    }
+
+    /* 光るフラッシュエフェクト */
+    .flash1 { animation: f1 0.6s ease-out; }
+    .flash2 { animation: f2 0.7s ease-out; }
+    .flash3 { animation: f3 0.8s ease-out; }
+    .flash4 { animation: f4 1.2s ease-out; }
+
+    @keyframes f1 {
+        0% { box-shadow: 0 0 50px #0DC2FF, inset 0 0 20px #0DC2FF; border-color: #0DC2FF; }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); }
+    }
+    @keyframes f2 {
+        0% { box-shadow: 0 0 60px #0DFF72, inset 0 0 30px #0DFF72; border-color: #0DFF72; }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); }
+    }
+    @keyframes f3 {
+        0% { box-shadow: 0 0 80px #FF8E0D, inset 0 0 50px #FF8E0D; border-color: #FF8E0D; background-color: rgba(255, 142, 13, 0.1); }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); background-color: var(--base-bg); }
+    }
+    @keyframes f4 {
+        0% { box-shadow: 0 0 120px #FF0D72, inset 0 0 80px #FF0D72; border-color: #FF0D72; background-color: rgba(255, 13, 114, 0.2); }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); background-color: var(--base-bg); }
+    }
+</style>
+</head>
+
+<!-- 初期状態はスタート画面の不気味モード -->
+<body class="start-mode">
+
+
+ <audio id="bgm" src="music.mp3" loop></audio>
+
+
+    <!-- === スタート画面（メニュー） === -->
+    <div id="start-screen" class="screen active">
+        <div class="title-logo">1, 2, TETRIS</div>
+        <button id="start-btn" class="start-btn">Start System</button>
+        
+        <div class="menu-controls">
+            <p><b>[ ← ] / [ → ]</b> または <b>[ Z ] /[ X ]</b><br>左右移動</p>
+            <p><b>[ A ] / [ D ]</b> または <b>[ ↑ ]</b><br>左/右 回転</p>
+            <p><b>[ ↓ ]</b> : 下へ移動 &nbsp;&nbsp; <b>[ SPACE ]</b> : ハードドロップ</p>
+        </div>
+    </div>
+
+    <!-- === ゲーム画面 === -->
+    <div id="game-screen" class="screen">
+        <div class="container">
+            <!-- メイン画面 -->
+            <div id="game-wrapper">
+                <canvas id="tetris" width="300" height="600"></canvas>
+                <div id="effect-layer">
+                    <div id="effect-text"></div>
+                </div>
+            </div>
+
+            <!-- サイドパネル -->
+            <div class="side-panel">
+                <div class="box">
+                    <div class="box-title">NEXT</div>
+                    <canvas id="next" width="120" height="120" style="margin: 0 auto; display:block;"></canvas>
+                </div>
+
+                <div class="box">
+                    <div class="box-title">SCORE</div>
+                    <div id="score" class="value-text">0</div>
+                </div>
+
+                <div class="box">
+                    <div class="box-title">LINES</div>
+                    <div id="lines" class="value-text">0</div>
+                </div>
+
+                <div class="controls box">
+                    <b>[←/→] / [Z/X]</b> : 左右移動<br>
+                    <b>[ A ] / [ D/↑ ]</b> : 左/右 回転<br>
+                    <b>[ ↓ ]</b> : 下へ移動<br>
+                    <b>[ Space ]</b> : 一気に落下
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- 初期設定 ---
+const canvas = document.getElementById('tetris');
+const ctx = canvas.getContext('2d');
+ctx.scale(30, 30);
+
+const nextCanvas = document.getElementById('next');
+const nextCtx = nextCanvas.getContext('2d');
+nextCtx.scale(30, 30);
+
+const COLS = 10;
+const ROWS = 20;
+
+const COLORS =[
+    null,
+    '#FF0D72', '#0DC2FF', '#0DFF72', '#F538FF',
+    '#FF8E0D', '#FFE138', '#3877FF'
+];
+
+// 【完璧修正版】すべてのミノの配列データを正確に記述。
+const PIECES = [
+    [],
+    [ // 1: Z
+        [1, 1, 0],[0, 1, 1],
+        [0, 0, 0]
+    ],[ // 2: I
+        [0, 0, 0, 0],[2, 2, 2, 2],[0, 0, 0, 0],[0, 0, 0, 0]
+    ],[ // 3: S
+        [0, 3, 3],
+        [3, 3, 0],
+        [0, 0, 0]
+    ],[ // 4: T
+        [0, 4, 0],[4, 4, 4],[0, 0, 0]
+    ],
+    [ // 5: L[0, 0, 5],
+        [5, 5, 5],[0, 0, 0]
+    ],
+    [ // 6: O
+        [6, 6],[6, 6]
+    ],
+    [ // 7: J[7, 0, 0],
+        [7, 7, 7],[0, 0, 0]
+    ]
+];
+
+function createMatrix(w, h) {
+    const matrix =[];
+    while (h--) { matrix.push(new Array(w).fill(0)); }
+    return matrix;
+}
+
+const arena = createMatrix(COLS, ROWS);
+
+const player = {
+    pos: { x: 0, y: 0 },
+    matrix: null,
+    nextMatrix: null,
+    score: 0,
+    lines: 0
+};
+
+let isNeonMode = false;
+let isPlaying = false; 
+let animationId;
+
+function randomPiece() {
+    const typeId = Math.floor(Math.random() * 7 + 1);
+    return PIECES[typeId];
+}
+
+// --- 画面切り替え制御 ---
+const startScreen = document.getElementById('start-screen');
+const gameScreen = document.getElementById('game-screen');
+const startBtn = document.getElementById('start-btn');
+
+startBtn.addEventListener('click', () => {
+
+    const bgm = document.getElementById('bgm');
+    if (bgm) { bgm.volume = 0.5; bgm.play(); }
+
+
+    // スタート画面の不気味なクラスを外す
+    document.body.classList.remove('start-mode');
+
+    // 画面切り替え
+    startScreen.classList.remove('active');
+    gameScreen.classList.add('active');
+    
+    // ゲームの初期化
+    arena.forEach(row => row.fill(0));
+    player.score = 0;
+    player.lines = 0;
+    player.nextMatrix = null;
+    isNeonMode = false;
+    
+    document.getElementById('score').innerText = "0";
+    document.getElementById('lines').innerText = "0";
+    document.getElementById('score').style.color = "#fff";
+    document.getElementById('score').style.textShadow = "0 0 10px rgba(255,255,255,0.3)";
+    document.body.classList.remove('neon-mode'); 
+
+    playerReset();
+    isPlaying = true;
+    lastTime = performance.now();
+    dropCounter = 0;
+    update(lastTime);
+});
+
+// ゲームオーバー処理
+function gameOver() {
+    isPlaying = false;
+    cancelAnimationFrame(animationId);
+    alert("SYSTEM DOWN... スコアとラインがリセットされます。");
+    
+    // 不気味なスタート画面に戻る
+    document.body.classList.remove('neon-mode'); 
+    document.body.classList.add('start-mode');
+    gameScreen.classList.remove('active');
+    startScreen.classList.add('active');
+
+    // BGMを止める場合はここで処理を追加可能
+    // const bgm = document.getElementById('bgm');
+    // if (bgm) { bgm.pause(); bgm.currentTime = 0; }
+}
+
+// --- 描画処理 ---
+
+function drawGrid() {
+    ctx.strokeStyle = isNeonMode ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.03)";
+    ctx.lineWidth = 0.05;
+    for (let x = 0; x <= COLS; x++) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ROWS); ctx.stroke();
+    }
+    for (let y = 0; y <= ROWS; y++) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(COLS, y); ctx.stroke();
+    }
+}
+
+function drawMatrix(matrix, offset, context, isGhost = false) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                const color = COLORS[value];
+                
+                if (isGhost) {
+                    context.fillStyle = "rgba(0, 0, 0, 0.3)";
+                    context.strokeStyle = color;
+                    context.lineWidth = 0.08;
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    context.strokeRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                } else {
+                    if (isNeonMode) {
+                        context.shadowBlur = 15;
+                        context.shadowColor = color;
+                    } else {
+                        context.shadowBlur = 0;
+                    }
+                    
+                    context.fillStyle = color;
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    
+                    context.shadowBlur = 0;
+                    context.fillStyle = "rgba(255, 255, 255, 0.4)";
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.1); 
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.1, 0.9); 
+                    
+                    context.fillStyle = "rgba(0, 0, 0, 0.4)";
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.85, 0.9, 0.1); 
+                    context.fillRect(x + offset.x + 0.85, y + offset.y + 0.05, 0.1, 0.9); 
+                }
+            }
+        });
+    });
+}
+
+function drawNext() {
+    nextCtx.clearRect(0, 0, 4, 4);
+    if (player.nextMatrix) {
+        let offsetX = 0.5; let offsetY = 0.5;
+        if (player.nextMatrix.length === 4) { offsetX = 0; offsetY = 0; } 
+        else if (player.nextMatrix.length === 2) { offsetX = 1; offsetY = 1; } 
+        drawMatrix(player.nextMatrix, {x: offsetX, y: offsetY}, nextCtx);
+    }
+}
+
+function drawGhost() {
+    const ghost = { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y } };
+    while (!collide(arena, ghost)) { ghost.pos.y++; }
+    ghost.pos.y--;
+    drawMatrix(ghost.matrix, ghost.pos, ctx, true);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, COLS, ROWS);
+    drawGrid();
+    drawMatrix(arena, { x: 0, y: 0 }, ctx);
+    drawGhost();
+    drawMatrix(player.matrix, player.pos, ctx);
+    drawNext();
+}
+
+// --- ゲームロジック ---
+
+function collide(arena, p) {
+    const m = p.matrix;
+    const o = p.pos;
+    for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+            if (m[y][x] !== 0 && (arena[y + o.y] && arena[y + o.y][x + o.x]) !== 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function merge(arena, p) {
+    p.matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) { arena[y + p.pos.y][x + p.pos.x] = value; }
+        });
+    });
+}
+
+function arenaSweep() {
+    let rowCount = 0;
+    outer: for (let y = arena.length - 1; y >= 0; --y) {
+        for (let x = 0; x < arena[y].length; ++x) {
+            if (arena[y][x] === 0) continue outer;
+        }
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        ++y;
+        rowCount++;
+    }
+
+    if (rowCount > 0) {
+        player.lines += rowCount;
+        document.getElementById('lines').innerText = player.lines;
+        
+        let justAwakened = false;
+        if (player.lines >= 10 && !isNeonMode) {
+            isNeonMode = true;
+            justAwakened = true;
+            document.body.classList.add('neon-mode');
+        }
+        triggerEffect(rowCount, justAwakened);
+    }
+}
+
+function playerReset() {
+    if (player.nextMatrix === null) player.nextMatrix = randomPiece();
+    
+    player.matrix = player.nextMatrix;
+    player.nextMatrix = randomPiece();
+    player.pos.y = 0;
+    player.pos.x = Math.floor(COLS / 2) - Math.floor(player.matrix[0].length / 2);
+    
+    if (collide(arena, player)) {
+        gameOver();
+    }
+}
+
+function playerDrop() {
+    player.pos.y++;
+    if (collide(arena, player)) {
+        player.pos.y--;
+        merge(arena, player);
+        playerReset();
+        arenaSweep();
+    }
+    dropCounter = 0;
+}
+
+function playerHardDrop() {
+    while (!collide(arena, player)) { player.pos.y++; }
+    player.pos.y--;
+    merge(arena, player);
+    playerReset();
+    arenaSweep();
+    dropCounter = 0;
+}
+
+function playerMove(offset) {
+    player.pos.x += offset;
+    if (collide(arena, player)) { player.pos.x -= offset; }
+}
+
+function rotate(matrix, dir) {
+    for (let y = 0; y < matrix.length; ++y) {
+        for (let x = 0; x < y; ++x) {
+            [matrix[x][y], matrix[y][x]] =[matrix[y][x], matrix[x][y]];
+        }
+    }
+    if (dir > 0) matrix.forEach(row => row.reverse());
+    else matrix.reverse();
+}
+
+function playerRotate(dir) {
+    const pos = player.pos.x;
+    let offset = 1;
+    rotate(player.matrix, dir);
+    while (collide(arena, player)) {
+        player.pos.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > player.matrix[0].length) {
+            rotate(player.matrix, -dir); 
+            player.pos.x = pos;
+            return;
+        }
+    }
+}
+
+// --- エフェクト処理 ---
+let effectTimeout;
+
+function triggerEffect(lines, justAwakened) {
+    let points = 0; let text = ""; let flashClass = ""; let color = "";
+
+    switch(lines) {
+        case 1: points = 100; text = "SINGLE"; flashClass = "flash1"; color = "#0DC2FF"; break; 
+        case 2: points = 300; text = "DOUBLE"; flashClass = "flash2"; color = "#0DFF72"; break; 
+        case 3: points = 500; text = "TRIPLE"; flashClass = "flash3"; color = "#FF8E0D"; break; 
+        case 4: points = 800; text = "TETRIS"; flashClass = "flash4"; color = "#FF0D72"; break; 
+    }
+
+    if (justAwakened) {
+        text += `<br><span style="font-size:24px; color:#fff; text-shadow:0 0 15px #fff;">SYSTEM AWAKEN</span>`;
+        flashClass = "flash4";
+    }
+
+    player.score += points;
+    const scoreEl = document.getElementById('score');
+    scoreEl.innerText = player.score;
+    
+    if (isNeonMode) {
+        scoreEl.style.color = color;
+        scoreEl.style.textShadow = `0 0 15px ${color}`;
+    }
+
+    const canvasElement = document.getElementById('tetris');
+    const effectTextElement = document.getElementById('effect-text');
+
+    effectTextElement.innerHTML = `<span style="color:${color}; display:block; text-shadow: 0 0 20px ${color}; line-height:1.2;">${text}</span>
+                                   <span style="color:white; font-size:24px; text-shadow: 0 0 10px white;">+${points}</span>`;
+
+    canvasElement.classList.remove('flash1', 'flash2', 'flash3', 'flash4');
+    effectTextElement.classList.remove('show-effect');
+    void canvasElement.offsetWidth; 
+    void effectTextElement.offsetWidth; 
+
+    canvasElement.classList.add(flashClass);
+    effectTextElement.classList.add('show-effect');
+
+    clearTimeout(effectTimeout);
+    effectTimeout = setTimeout(() => { 
+        canvasElement.classList.remove('flash1', 'flash2', 'flash3', 'flash4'); 
+    }, 1200);
+}
+
+// --- メインループ ---
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
+
+function update(time = 0) {
+    if (!isPlaying) return;
+
+    const deltaTime = time - lastTime;
+    dropCounter += deltaTime;
+    
+    const currentInterval = isNeonMode ? 700 : dropInterval;
+
+    if (dropCounter > currentInterval) {
+        playerDrop();
+    }
+    
+    lastTime = time;
+    draw();
+    animationId = requestAnimationFrame(update);
+}
+
+// --- キーボード操作（十字キーとアルファベットの両方に対応） ---
+document.addEventListener('keydown', event => {
+    if (!isPlaying) return;
+
+    // スクロール防止
+    if([32, 37, 38, 39, 40].includes(event.keyCode)) event.preventDefault();
+
+    // 左右移動（左矢印 または Z または z）
+    if (event.keyCode === 37 || event.key === 'z' || event.key === 'Z') { 
+        playerMove(-1); 
+    } 
+    // 左右移動（右矢印 または X または x）
+    else if (event.keyCode === 39 || event.key === 'x' || event.key === 'X') { 
+        playerMove(1); 
+    }
+    // 下移動（下矢印）
+    else if (event.keyCode === 40) { 
+        playerDrop(); 
+    }
+    // 左回転（A または a）
+    else if (event.key === 'a' || event.key === 'A') { 
+        playerRotate(-1); 
+    }
+    // 右回転（上矢印 または D または d）
+    else if (event.keyCode === 38 || event.key === 'd' || event.key === 'D') { 
+        playerRotate(1); 
+    }
+    // ハードドロップ（スペースキー）
+    else if (event.keyCode === 32) { 
+        playerHardDrop(); 
+    }
+});
+
+</script>
+</body>
+</html>
