@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>1,2,テトリス - GREEN CORE</title>
+<!-- デジタル・サイバー風フォント -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+    /* --- 全体ベース：グリーン基調 --- */
+    body {
+        background-color: #020202;
+        background-image: radial-gradient(circle at center, #0a1f0a 0%, #000 100%);
+        color: #a0ffa0;
+        font-family: 'Orbitron', sans-serif;
+        margin: 0;
+        overflow: hidden;
+        transition: background-image 1s, background-color 1s;
+    }
+
+    /* スキャンライン（薄いグリーン） */
+    body::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: repeating-linear-gradient(
+            0deg,
+            rgba(0, 255, 100, 0.08),
+            rgba(0, 255, 100, 0.08) 1px,
+            transparent 1px,
+            transparent 2px
+        );
+        pointer-events: none;
+        z-index: 100;
+    }
+
+    /* 画面切り替え用 */
+    .screen {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+        z-index: 10;
+    }
+    .screen.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* ========= スタート画面：グリーンコア ========= */
+    body.start-mode {
+        background-color: #030803;
+        background-image: radial-gradient(circle at center, #132013 0%, #010301 100%);
+    }
+    body.start-mode::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none;
+        animation: green-flicker 5s infinite;
+        z-index: 99;
+    }
+    @keyframes green-flicker {
+        0%, 95%, 100% { background: rgba(0, 255, 0, 0); }
+        92% { background: rgba(0, 255, 100, 0.05); }
+        94% { background: rgba(0, 20, 0, 0.9); }
+        96% { background: rgba(0, 255, 0, 0.03); }
+        98% { background: rgba(0, 30, 0, 0.8); }
+    }
+
+    .title-logo {
+        font-size: 65px;
+        font-weight: 900;
+        color: #3eff9e;
+        text-shadow: 0 0 20px #1fff8c, 0 0 40px #0e8040;
+        margin-bottom: 30px;
+        letter-spacing: 8px;
+        animation: glitch-green 3.8s infinite;
+    }
+    @keyframes glitch-green {
+        0%, 90%, 100% { transform: none; color: #3eff9e; text-shadow: 0 0 20px #1fff8c; }
+        92% { transform: translate(3px, 2px) skewX(8deg); color: #fff; text-shadow: -2px 0 #a0ffa0, 2px 0 #00a86b; }
+        94% { transform: translate(-3px, -1px) skewX(-5deg); color: #3eff9e; }
+        96% { transform: translate(1px, -2px) skewX(3deg); color: #fff; text-shadow: 2px 0 #a0ffa0, -2px 0 #00a86b; }
+    }
+
+    /* オプションエリア：グリーントグル */
+    .option-wrapper {
+        margin-bottom: 30px;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .cyber-toggle {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        color: #5f9f5f;
+        transition: color 0.3s;
+    }
+    .cyber-toggle:hover .label-text {
+        color: #8effb2;
+    }
+    .cyber-toggle input {
+        display: none;
+    }
+    .slider {
+        position: relative;
+        width: 60px;
+        height: 28px;
+        background-color: rgba(20, 40, 20, 0.7);
+        border: 2px solid #2a6b2a;
+        border-radius: 14px;
+        margin-right: 15px;
+        transition: 0.3s;
+        box-shadow: inset 0 0 8px #0f3f0f;
+    }
+    .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: #3a9b3a;
+        border-radius: 50%;
+        transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .cyber-toggle input:checked + .slider {
+        background-color: rgba(0, 255, 100, 0.15);
+        border-color: #3eff9e;
+        box-shadow: 0 0 20px #1fff8c, inset 0 0 12px #1fff8c;
+    }
+    .cyber-toggle input:checked + .slider::before {
+        transform: translateX(32px);
+        background-color: #3eff9e;
+        box-shadow: 0 0 15px #b0ffc0;
+    }
+    .label-text {
+        font-size: 16px;
+        letter-spacing: 3px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .cyber-toggle input:checked ~ .label-text {
+        color: #9effb2;
+        text-shadow: 0 0 15px #3eff9e;
+    }
+
+    .start-btn {
+        background: rgba(10, 30, 10, 0.7);
+        color: #3eff9e;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        border: 2px solid #3eff9e;
+        padding: 15px 40px;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 25px #1fff8c, inset 0 0 12px #1f8f5f;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        z-index: 20;
+    }
+    .start-btn:hover {
+        background: #3eff9e;
+        color: #000;
+        box-shadow: 0 0 40px #8effb2, inset 0 0 30px #ffffff;
+    }
+
+    .menu-controls {
+        margin-top: 40px;
+        text-align: center;
+        color: #6a9a6a;
+        font-size: 13px;
+        line-height: 2.2;
+    }
+    .menu-controls b { color: #8effb2; font-size: 15px; }
+
+    /* ========= ゲーム画面：グリーン基調 ========= */
+    .container {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+    }
+    #game-wrapper {
+        position: relative;
+        width: 300px;
+        height: 600px;
+    }
+    canvas { display: block; }
+
+    :root {
+        --base-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        --base-border: #1c4f1c;
+        --base-bg: rgba(2, 20, 2, 0.85);
+        --panel-border: #1f6b1f;
+    }
+
+    /* ネオン覚醒（＝グリーンブースト） */
+    body.neon-mode {
+        background-color: #000c00;
+        background-image: radial-gradient(circle at center, #144014 0%, #000 100%);
+    }
+    body.neon-mode #tetris {
+        --base-shadow: 0 0 50px rgba(62, 255, 158, 0.3), 0 0 15px #2fa05f;
+        --base-border: #3eff9e;
+        --panel-border: #5effb2;
+    }
+
+    #tetris {
+        background-color: var(--base-bg);
+        border: 2px solid var(--base-border);
+        border-radius: 8px;
+        box-shadow: var(--base-shadow);
+        transition: border-color 0.5s, box-shadow 0.5s, background-color 0.5s;
+    }
+
+    /* タイマー表示：左上にグリーンで大きく */
+    #timer-panel {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(0, 10, 0, 0.7);
+        border: 1px solid #2f9f5f;
+        border-radius: 8px;
+        padding: 10px 20px;
+        color: #9effb2;
+        font-size: 32px;
+        font-weight: 900;
+        text-shadow: 0 0 20px #1fff8c;
+        box-shadow: 0 0 30px #0f3f0f;
+        letter-spacing: 4px;
+        z-index: 200;
+        backdrop-filter: blur(2px);
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    .side-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 190px;
+    }
+    .box {
+        background: rgba(2, 20, 2, 0.8);
+        border: 1px solid var(--panel-border);
+        border-radius: 6px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: inset 0 0 12px #0f3f0f, 0 5px 15px #020802;
+        transition: border-color 0.5s;
+    }
+    .box-title {
+        color: #8effb2;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        margin-bottom: 8px;
+        text-shadow: 0 0 10px #2f9f5f;
+    }
+    .value-text {
+        font-size: 32px;
+        font-weight: 900;
+        color: #d0ffd0;
+        text-shadow: 0 0 15px #1fff8c;
+        transition: color 0.3s, text-shadow 0.3s;
+    }
+    .controls {
+        font-size: 11px;
+        color: #7ba87b;
+        line-height: 2;
+        text-align: left;
+    }
+    .controls b { 
+        color: #9effb2;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 12px;
+    }
+
+    /* エフェクトテキスト */
+    #effect-layer {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    #effect-text {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 900;
+        opacity: 0;
+        transform: scale(0.5);
+        letter-spacing: 2px;
+    }
+    .show-effect { animation: pop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes pop {
+        0% { opacity: 0; transform: scale(0.5) translateY(30px); }
+        15% { opacity: 1; transform: scale(1.1) translateY(0); }
+        70% { opacity: 1; transform: scale(1) translateY(0); }
+        100% { opacity: 0; transform: scale(0.8) translateY(-30px); }
+    }
+
+    /* ライン消去フラッシュ：グリーン寄りに微調整 */
+    .flash1 { animation: f1 0.6s ease-out; }
+    .flash2 { animation: f2 0.7s ease-out; }
+    .flash3 { animation: f3 0.8s ease-out; }
+    .flash4 { animation: f4 1.2s ease-out; }
+    @keyframes f1 {
+        0% { box-shadow: 0 0 60px #6effb2, inset 0 0 20px #6effb2; border-color: #6effb2; }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); }
+    }
+    @keyframes f2 {
+        0% { box-shadow: 0 0 70px #8eff72, inset 0 0 30px #8eff72; border-color: #8eff72; }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); }
+    }
+    @keyframes f3 {
+        0% { box-shadow: 0 0 90px #b2ff5f, inset 0 0 40px #b2ff5f; border-color: #b2ff5f; background-color: rgba(150, 255, 100, 0.1); }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); background-color: var(--base-bg); }
+    }
+    @keyframes f4 {
+        0% { box-shadow: 0 0 130px #d0ffa0, inset 0 0 70px #d0ffa0; border-color: #d0ffa0; background-color: rgba(200, 255, 150, 0.15); }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); background-color: var(--base-bg); }
+    }
+    .flash-milestone { animation: f-milestone 1.5s ease-out; }
+    @keyframes f-milestone {
+        0% { box-shadow: 0 0 200px #efffef, inset 0 0 100px #efffef; border-color: #efffef; background-color: rgba(255, 255, 255, 0.2); }
+        30% { box-shadow: 0 0 150px #8effb2, inset 0 0 80px #8effb2; border-color: #8effb2; }
+        70% { box-shadow: 0 0 100px #3eff9e, inset 0 0 50px #3eff9e; border-color: #3eff9e; }
+        100% { box-shadow: var(--base-shadow); border-color: var(--base-border); background-color: var(--base-bg); }
+    }
+    .milestone-flash { animation: body-flash 1.5s ease-out; }
+    @keyframes body-flash {
+        0% { filter: brightness(2.5) contrast(1.2) hue-rotate(30deg); }
+        50% { filter: brightness(1.8) contrast(1.1) hue-rotate(70deg); }
+        100% { filter: brightness(1) contrast(1) hue-rotate(0deg); }
+    }
+</style>
+</head>
+<body class="start-mode">
+
+<audio id="bgm" src="music.mp3" loop></audio>
+
+<!-- タイマー表示（常に左上、ゲーム中のみ有効） -->
+<div id="timer-panel" style="display: none;">00:00.0</div>
+
+<!-- スタート画面 -->
+<div id="start-screen" class="screen active">
+    <div class="title-logo">1, 2, TETRIS</div>
+    <div class="option-wrapper">
+        <label class="cyber-toggle">
+            <input type="checkbox" id="force-neon-mode">
+            <span class="slider"></span>
+            <span class="label-text">GREEN BOOST (EFFECT ON)</span>
+        </label>
+        <!-- ★追加：加速なしモードトグル -->
+        <label class="cyber-toggle">
+            <input type="checkbox" id="no-accel-mode">
+            <span class="slider"></span>
+            <span class="label-text">ACCEL OFF (定速モード)</span>
+        </label>
+    </div>
+    <button id="start-btn" class="start-btn">CORE START</button>
+    <div class="menu-controls">
+        <p><b>[ ← ] / [ → ]</b> または <b>[ Z ] / [ X ]</b> 左右移動</p>
+        <p><b>[ A ] / [ D ] / [ ↑ ]</b> 回転</p>
+        <p><b>[ ↓ ]</b> ソフトドロップ &nbsp;&nbsp; <b>[ SPACE ]</b> ハードドロップ</p>
+    </div>
+</div>
+
+<!-- ゲーム画面 -->
+<div id="game-screen" class="screen">
+    <div class="container">
+        <div id="game-wrapper">
+            <canvas id="tetris" width="300" height="600"></canvas>
+            <div id="effect-layer">
+                <div id="effect-text"></div>
+            </div>
+        </div>
+        <div class="side-panel">
+            <div class="box">
+                <div class="box-title">NEXT</div>
+                <canvas id="next" width="120" height="120" style="margin:0 auto; display:block;"></canvas>
+            </div>
+            <div class="box">
+                <div class="box-title">SCORE</div>
+                <div id="score" class="value-text">0</div>
+            </div>
+            <div class="box">
+                <div class="box-title">LINES</div>
+                <div id="lines" class="value-text">0</div>
+            </div>
+            <div class="controls box">
+                <b>[←/→] / [Z/X]</b> : 左右<br>
+                <b>[ A / D / ↑ ]</b> : 回転<br>
+                <b>[ ↓ ]</b> : 下へ<br>
+                <b>[ Space ]</b> : 一気に落下
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('tetris');
+const ctx = canvas.getContext('2d');
+ctx.scale(30, 30);
+
+const nextCanvas = document.getElementById('next');
+const nextCtx = nextCanvas.getContext('2d');
+nextCtx.scale(30, 30);
+
+const COLS = 10;
+const ROWS = 20;
+
+// グリーン系の配色に微調整 (既存のCOLORSを少しグリーン寄りに)
+const COLORS =[
+    null,
+    '#5fff8f', '#3eff9e', '#8effb2', '#b2ffcc',  // 1-4 グリーン/ミント
+    '#2fcf6f', '#9fef9f', '#7fcf7f'               // 5-7 深めグリーン
+];
+
+const PIECES = [
+    [],[],[   // 2: I (4マス) 簡易形状
+        [2,2,2,2]
+    ],[],[],[   // 6: O (2マス)
+        [6,6]
+    ],[]
+];
+
+function createMatrix(w, h) {
+    const matrix = [];
+    while (h--) matrix.push(new Array(w).fill(0));
+    return matrix;
+}
+const arena = createMatrix(COLS, ROWS);
+
+const player = {
+    pos: { x: 0, y: 0 },
+    matrix: null,
+    nextMatrix: null,
+    score: 0,
+    lines: 0
+};
+
+let isNeonMode = false;          // グリーンブースト（視覚エフェクト）
+let noAccelMode = false;         // ★加速なしモード
+let isPlaying = false;
+let animationId;
+
+// タイマー関連
+let timerSeconds = 0;
+let timerInterval = null;
+const timerPanel = document.getElementById('timer-panel');
+
+function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = (sec % 60).toFixed(1);
+    return `${m.toString().padStart(2, '0')}:${s.padStart(4, '0')}`;
+}
+function startTimer() {
+    stopTimer();
+    timerSeconds = 0;
+    timerPanel.style.display = 'block';
+    timerPanel.innerText = formatTime(0);
+    timerInterval = setInterval(() => {
+        timerSeconds += 0.1;
+        timerPanel.innerText = formatTime(timerSeconds);
+    }, 100);
+}
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    timerPanel.style.display = 'none';
+}
+
+function randomPiece() {
+    const types = [2, 6];
+    const typeId = types[Math.floor(Math.random() * types.length)];
+    return PIECES[typeId];
+}
+
+// --- 画面遷移 ---
+const startScreen = document.getElementById('start-screen');
+const gameScreen = document.getElementById('game-screen');
+const startBtn = document.getElementById('start-btn');
+
+startBtn.addEventListener('click', () => {
+    const bgm = document.getElementById('bgm');
+    if (bgm) { bgm.volume = 0.4; bgm.play(); }
+
+    document.body.classList.remove('start-mode', 'milestone-flash');
+    startScreen.classList.remove('active');
+    gameScreen.classList.add('active');
+    
+    arena.forEach(row => row.fill(0));
+    player.score = 0;
+    player.lines = 0;
+    player.nextMatrix = null;
+    
+    // トグル状態取得
+    isNeonMode = document.getElementById('force-neon-mode').checked;
+    noAccelMode = document.getElementById('no-accel-mode').checked;  // ★加速なし
+    
+    document.getElementById('score').innerText = "0";
+    document.getElementById('lines').innerText = "0";
+    
+    if (isNeonMode) {
+        document.body.classList.add('neon-mode');
+    } else {
+        document.body.classList.remove('neon-mode');
+    }
+    
+    playerReset();
+    isPlaying = true;
+    lastTime = performance.now();
+    dropCounter = 0;
+    
+    startTimer();  // タイマー開始
+    
+    update(lastTime);
+});
+
+function gameOver() {
+    isPlaying = false;
+    cancelAnimationFrame(animationId);
+    stopTimer();  // タイマー停止
+    
+    alert("SYSTEM DOWN... 初期画面に戻ります。");
+    
+    document.body.classList.remove('neon-mode', 'milestone-flash');
+    document.body.classList.add('start-mode');
+    gameScreen.classList.remove('active');
+    startScreen.classList.add('active');
+
+    const bgm = document.getElementById('bgm');
+    if (bgm) { bgm.pause(); bgm.currentTime = 0; }
+}
+
+// --- 描画 ---
+function drawGrid() {
+    ctx.strokeStyle = isNeonMode ? "rgba(100, 255, 150, 0.15)" : "rgba(50, 150, 80, 0.08)";
+    ctx.lineWidth = 0.05;
+    for (let x = 0; x <= COLS; x++) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, ROWS); ctx.stroke(); }
+    for (let y = 0; y <= ROWS; y++) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(COLS, y); ctx.stroke(); }
+}
+
+function drawMatrix(matrix, offset, context, isGhost = false) {
+    matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+            if (value !== 0) {
+                const color = COLORS[value];
+                if (isGhost) {
+                    context.fillStyle = "rgba(0, 30, 0, 0.3)";
+                    context.strokeStyle = "#8effb2";
+                    context.lineWidth = 0.08;
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    context.strokeRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                } else {
+                    if (isNeonMode) {
+                        context.shadowBlur = 18;
+                        context.shadowColor = color;
+                    } else { context.shadowBlur = 0; }
+                    
+                    context.fillStyle = color;
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.9);
+                    
+                    context.shadowBlur = 0;
+                    context.fillStyle = "rgba(230, 255, 230, 0.5)";
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.9, 0.1);
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.05, 0.1, 0.9);
+                    
+                    context.fillStyle = "rgba(0, 20, 0, 0.5)";
+                    context.fillRect(x + offset.x + 0.05, y + offset.y + 0.85, 0.9, 0.1);
+                    context.fillRect(x + offset.x + 0.85, y + offset.y + 0.05, 0.1, 0.9);
+                }
+            }
+        });
+    });
+}
+
+function drawGhost() {
+    const ghost = { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y } };
+    while (!collide(arena, ghost)) ghost.pos.y++;
+    ghost.pos.y--;
+    drawMatrix(ghost.matrix, ghost.pos, ctx, true);
+}
+function drawNext() {
+    nextCtx.clearRect(0, 0, 4, 4);
+    if (player.nextMatrix) {
+        let ox = (player.nextMatrix.length === 2) ? 1 : 0;
+        let oy = (player.nextMatrix.length === 2) ? 1 : 0;
+        drawMatrix(player.nextMatrix, { x: ox, y: oy }, nextCtx);
+    }
+}
+function draw() {
+    ctx.clearRect(0, 0, COLS, ROWS);
+    drawGrid();
+    drawMatrix(arena, { x: 0, y: 0 }, ctx);
+    drawGhost();
+    drawMatrix(player.matrix, player.pos, ctx);
+    drawNext();
+}
+
+// --- ロジック ---
+function collide(arena, p) {
+    const m = p.matrix, o = p.pos;
+    for (let y = 0; y < m.length; y++) {
+        for (let x = 0; x < m[y].length; x++) {
+            if (m[y][x] !== 0 && (arena[y+o.y] && arena[y+o.y][x+o.x]) !== 0) return true;
+        }
+    }
+    return false;
+}
+function merge(arena, p) {
+    p.matrix.forEach((row, y) => {
+        row.forEach((value, x) => { if (value !== 0) arena[y + p.pos.y][x + p.pos.x] = value; });
+    });
+}
+
+function arenaSweep() {
+    let rowCount = 0;
+    outer: for (let y = arena.length - 1; y >= 0; --y) {
+        for (let x = 0; x < arena[y].length; ++x) if (arena[y][x] === 0) continue outer;
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        ++y;
+        rowCount++;
+    }
+    if (rowCount > 0) {
+        let prevLines = player.lines;
+        player.lines += rowCount;
+        document.getElementById('lines').innerText = player.lines;
+        
+        let crossedMilestone = 0;
+        if (Math.floor(prevLines / 10) < Math.floor(player.lines / 10)) {
+            crossedMilestone = Math.floor(player.lines / 10) * 10;
+        }
+        // 加速なしモードの時は、10ラインを超えても自動Boost ONにはしない（見た目だけは反映可能）
+        if (crossedMilestone === 10 && !isNeonMode && !noAccelMode) {
+            isNeonMode = true;
+            document.body.classList.add('neon-mode');
+        }
+        triggerEffect(rowCount, crossedMilestone);
+    }
+}
+
+function playerReset() {
+    if (!player.nextMatrix) player.nextMatrix = randomPiece();
+    player.matrix = player.nextMatrix;
+    player.nextMatrix = randomPiece();
+    player.pos.y = 0;
+    player.pos.x = Math.floor(COLS/2) - Math.floor(player.matrix[0].length/2);
+    if (collide(arena, player)) gameOver();
+}
+function playerDrop() {
+    player.pos.y++;
+    if (collide(arena, player)) {
+        player.pos.y--;
+        merge(arena, player);
+        playerReset();
+        arenaSweep();
+    }
+    dropCounter = 0;
+}
+function playerHardDrop() {
+    while (!collide(arena, player)) player.pos.y++;
+    player.pos.y--;
+    merge(arena, player);
+    playerReset();
+    arenaSweep();
+    dropCounter = 0;
+}
+function playerMove(offset) {
+    player.pos.x += offset;
+    if (collide(arena, player)) player.pos.x -= offset;
+}
+function rotate(matrix, dir) {
+    for (let y = 0; y < matrix.length; y++) {
+        for (let x = 0; x < y; x++) { [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]]; }
+    }
+    if (dir > 0) matrix.forEach(row => row.reverse());
+    else matrix.reverse();
+}
+function playerRotate(dir) {
+    const pos = player.pos.x;
+    let offset = 1;
+    rotate(player.matrix, dir);
+    while (collide(arena, player)) {
+        player.pos.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > player.matrix[0].length) {
+            rotate(player.matrix, -dir);
+            player.pos.x = pos;
+            return;
+        }
+    }
+}
+
+// エフェクト表示
+let effectTimeout;
+function triggerEffect(lines, crossedMilestone) {
+    let points = 0, text = "", flashClass = "", color = "#8effb2";
+    switch(lines) {
+        case 1: points = 100; text = "SINGLE"; flashClass = "flash1"; color = "#8effb2"; break;
+        case 2: points = 300; text = "DOUBLE"; flashClass = "flash2"; color = "#9effb2"; break;
+        case 3: points = 500; text = "TRIPLE"; flashClass = "flash3"; color = "#b2ffb2"; break;
+        case 4: points = 800; text = "TETRIS"; flashClass = "flash4"; color = "#d0ffd0"; break;
+    }
+    if (crossedMilestone > 0) {
+        if (crossedMilestone === 10) {
+            text += `<br><span style="font-size:26px; color:#fff; text-shadow:0 0 20px #fff;">CORE BOOST</span>`;
+        } else {
+            text += `<br><span style="font-size:26px; color:#fff; text-shadow:0 0 20px #fff;">${crossedMilestone} LINES</span><br><span style="font-size:16px;">SPEED UP</span>`;
+        }
+        flashClass = "flash-milestone";
+        document.body.classList.remove('milestone-flash');
+        void document.body.offsetWidth;
+        document.body.classList.add('milestone-flash');
+        setTimeout(() => document.body.classList.remove('milestone-flash'), 1500);
+    }
+    player.score += points;
+    document.getElementById('score').innerText = player.score;
+
+    const canvasEl = document.getElementById('tetris');
+    const effectEl = document.getElementById('effect-text');
+    effectEl.innerHTML = `<span style="color:${color}; text-shadow:0 0 20px ${color};">${text}</span><br><span style="color:#fff; font-size:24px;">+${points}</span>`;
+    
+    canvasEl.classList.remove('flash1','flash2','flash3','flash4','flash-milestone');
+    effectEl.classList.remove('show-effect');
+    void canvasEl.offsetWidth; void effectEl.offsetWidth;
+    canvasEl.classList.add(flashClass);
+    effectEl.classList.add('show-effect');
+    
+    clearTimeout(effectTimeout);
+    effectTimeout = setTimeout(() => canvasEl.classList.remove('flash1','flash2','flash3','flash4','flash-milestone'), 1500);
+}
+
+// --- メインループ ---
+let dropCounter = 0;
+let dropInterval = 1000;  // 基本1秒
+let lastTime = 0;
+
+function update(time = 0) {
+    if (!isPlaying) return;
+    const deltaTime = time - lastTime;
+    dropCounter += deltaTime;
+
+    // 加速なしモードの場合は lines/10 による速度変化を無効化 (常に基本速度)
+    let speedLevel = 0;
+    if (!noAccelMode) {
+        speedLevel = Math.floor(player.lines / 10);
+    }
+    const currentInterval = Math.max(100, dropInterval - (speedLevel * 100));
+    
+    if (dropCounter > currentInterval) {
+        playerDrop();
+    }
+    lastTime = time;
+    draw();
+    animationId = requestAnimationFrame(update);
+}
+
+// --- キーボード ---
+document.addEventListener('keydown', (e) => {
+    if (!isPlaying) return;
+    if ([32,37,38,39,40].includes(e.keyCode)) e.preventDefault();
+    
+    if (e.keyCode === 37 || e.key === 'z' || e.key === 'Z') playerMove(-1);
+    else if (e.keyCode === 39 || e.key === 'x' || e.key === 'X') playerMove(1);
+    else if (e.keyCode === 40) playerDrop();
+    else if (e.key === 'a' || e.key === 'A') playerRotate(-1);
+    else if (e.keyCode === 38 || e.key === 'd' || e.key === 'D') playerRotate(1);
+    else if (e.keyCode === 32) playerHardDrop();
+});
+</script>
+</body>
+</html>
