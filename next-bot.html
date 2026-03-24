@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リマインダーBot | 学生開発の安心Discordボット</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+            background-color: #ffffff;
+            color: #2d3436;
+        }
+
+        /* 多角形デザイン */
+        .poly-hero {
+            background: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+        }
+
+        .poly-bg-dark {
+            background-color: #1e272e;
+            clip-path: polygon(0 10%, 100% 0, 100% 90%, 0% 100%);
+            margin-top: -50px;
+            padding: 150px 0;
+        }
+
+        .poly-card {
+            clip-path: polygon(0 0, 100% 5%, 100% 100%, 0% 95%);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .poly-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            clip-path: polygon(0 5%, 100% 0%, 100% 95%, 0% 100%);
+        }
+
+        /* 日本品質バッジ */
+        .jp-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .jp-flag {
+            width: 20px; height: 14px; background-color: white;
+            position: relative; margin-right: 8px; border-radius: 2px; display: inline-block;
+        }
+        .jp-flag::after {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 8px; height: 8px; background-color: #bc002d; border-radius: 50%;
+        }
+
+        .btn-grad {
+            background-image: linear-gradient(to right, #FF512F 0%, #DD2476 51%, #FF512F 100%);
+            transition: 0.5s; background-size: 200% auto;
+        }
+        .btn-grad:hover { background-position: right center; }
+
+        /* AIツールチップ */
+        .ai-badge {
+            position: fixed; bottom: 20px; right: 20px; z-index: 999; cursor: pointer;
+        }
+        .ai-tooltip {
+            position: fixed; bottom: 80px; right: 20px; background: #000; color: white;
+            padding: 15px; border-radius: 15px; font-size: 0.8rem; max-width: 250px;
+            opacity: 0; transform: translateY(20px); transition: 0.3s; pointer-events: none;
+            border: 1px solid #4834d4; z-index: 998;
+        }
+        .ai-tooltip.show { opacity: 1; transform: translateY(0); }
+
+        .admin-warning {
+            border: 2px dashed #f56565; background: #fff5f5; color: #c53030;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- AIバッジ -->
+    <div class="ai-badge" id="aiBadge">
+        <div class="bg-black/80 backdrop-blur text-white rounded-full px-4 py-2 shadow-xl flex items-center space-x-2 border border-white/20">
+            <i class="fas fa-robot text-indigo-400"></i>
+            <span class="text-xs font-bold tracking-widest">AI OPTIMIZED</span>
+        </div>
+    </div>
+    <div class="ai-tooltip" id="aiTooltip">
+        <div class="font-bold text-indigo-400 mb-1 italic underline">Development Stack</div>
+        <p class="mb-2">最先端AIを駆使した効率的開発：</p>
+        <ul class="space-y-1 opacity-80">
+            <li>• Gemini 3.1 Pro</li>
+            <li>• DeepSeek</li>
+            <li>• Le Chat</li>
+        </ul>
+    </div>
+
+    <!-- ナビ -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <span class="text-2xl font-black text-indigo-700">リマインダー<span class="text-pink-500">Bot</span></span>
+            <div class="flex items-center space-x-4">
+                <a href="https://github.com/konita2222" target="_blank" class="text-gray-500 hover:text-black transition"><i class="fab fa-github text-xl"></i></a>
+                <a href="https://discord.com/oauth2/authorize?client_id=1485878619007094875&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" class="btn-grad text-white px-5 py-2 rounded-full font-bold text-sm shadow-md">招待する</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ヒーロー -->
+    <header class="poly-hero pt-40 pb-56 px-6 text-white text-center relative overflow-hidden">
+        <div class="container mx-auto relative z-10">
+            <div class="jp-badge" data-aos="fade-down">
+                <span class="jp-flag"></span> MADE IN JAPAN
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-6" data-aos="zoom-in">時間を、<br><span class="text-yellow-300 italic">Hack</span>する。</h1>
+            <p class="text-lg md:text-xl mb-10 opacity-90 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                日本国内サーバー稼働。学生開発ならではの情熱と、AIによる緻密な設計が融合した次世代リマインダー。
+            </p>
+            <div class="flex flex-col items-center space-y-4" data-aos="fade-up" data-aos-delay="400">
+                <a href="https://discord.com/oauth2/authorize?client_id=1485878619007094875&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" class="bg-white text-indigo-700 px-10 py-4 rounded-2xl font-black text-xl hover:shadow-2xl transition transform hover:-translate-y-1">
+                    無料でサーバーに追加
+                </a>
+                <p class="text-sm font-bold text-indigo-200"><i class="fas fa-exclamation-triangle mr-1"></i> 管理者権限(Administrator)が必要です</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 開発者メッセージ（学生・バグについて） -->
+    <section class="py-20 px-6 bg-white relative z-20">
+        <div class="container mx-auto max-w-4xl">
+            <div class="grid md:grid-cols-5 gap-8 items-center bg-gray-50 p-8 md:p-12 rounded-[2rem] border border-gray-100 shadow-sm" data-aos="fade-up">
+                <div class="md:col-span-2 text-center">
+                    <div class="w-32 h-32 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-5xl">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="text-xl font-bold">konita2222</h3>
+                    <p class="text-indigo-600 font-bold text-sm">Student Developer</p>
+                </div>
+                <div class="md:col-span-3">
+                    <h2 class="text-2xl font-black mb-4 flex items-center">
+                        <i class="fas fa-pen-nib mr-2 text-pink-500"></i> 開発者より
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed mb-4 text-sm md:text-base">
+                        本Botをご覧いただきありがとうございます。私は現在学生として学業に励む傍ら、このリマインダーBotの開発を行っております。<br><br>
+                        最新のAI（<b>Gemini 3.1 Pro / DeepSeek / Le Chat</b>）を駆使し、品質向上に努めておりますが、至らぬ点もあり、<b>バグが完全に排除できているわけではありません。</b><br><br>
+                        学業との兼ね合いにより、<b>不具合の修正やアップデートにお時間をいただく場合がございます。</b>何卒ご理解と温かいご支援をいただけますと幸いです。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/konita2222" target="_blank" class="text-sm font-bold border-b-2 border-indigo-500 hover:text-indigo-500 transition">GitHub Profile</a>
+                        <a href="https://x.com/nextzzz2w22" target="_blank" class="text-sm font-bold border-b-2 border-pink-500 hover:text-pink-500 transition">Contact via X</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 重要：管理者権限について -->
+    <section class="pb-20 px-6">
+        <div class="container mx-auto max-w-4xl">
+            <div class="admin-warning p-6 rounded-2xl flex flex-col md:flex-row items-center text-center md:text-left gap-6" data-aos="zoom-in">
+                <div class="text-4xl"><i class="fas fa-shield-halved"></i></div>
+                <div>
+                    <h4 class="text-lg font-black mb-1">導入時の注意：管理者権限(Administrator)</h4>
+                    <p class="text-sm opacity-90">
+                        本Botは通知の確実性を担保するため、管理者権限を必要とします。権限が不足している場合、メッセージの送信やコマンドの実行が正常に行われない可能性があります。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特徴：多角形 -->
+    <section class="poly-bg-dark text-white overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black mb-2 italic">SYSTEM ARCHITECTURE</h2>
+                <div class="h-1 w-20 bg-pink-500 mx-auto"></div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="poly-card bg-indigo-600/10 p-10 border border-indigo-500/20" data-aos="fade-up" data-aos-delay="100">
+                    <i class="fas fa-bolt text-3xl text-yellow-400 mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">AI-Powered Code</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Gemini 3.1 Pro等の先端AIを用いてロジックを最適化。学生開発の柔軟な発想と、AIの正確性が融合しています。</p>
+                </div>
+                <div class="poly-card bg-indigo-600/10 p-10 border border-indigo-500/20" data-aos="fade-up" data-aos-delay="200">
+                    <i class="fas fa-server text-3xl text-indigo-400 mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Stable Hosting</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Replit × UptimeRobotの24時間体制。授業中も睡眠中も、あなたのリマインドを逃しません。</p>
+                </div>
+                <div class="poly-card bg-indigo-600/10 p-10 border border-indigo-500/20" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-language text-3xl text-pink-400 mb-6"></i>
+                    <h3 class="text-xl font-bold mb-4">Japan Quality</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">日本標準時(JST)完全対応。海外製Botで起きがちな「9時間のズレ」は、ここには存在しません。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- コマンド -->
+    <section class="py-24 px-6 bg-gray-50 text-center">
+        <h2 class="text-3xl font-black mb-12">使い方</h2>
+        <div class="flex flex-wrap justify-center gap-4 mb-12" data-aos="fade-up">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 font-mono text-indigo-600">/remind [時間] [内容]</div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 font-mono text-indigo-600">/list</div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 font-mono text-indigo-600">/delete [ID]</div>
+        </div>
+        <a href="https://discord.com/oauth2/authorize?client_id=1485878619007094875&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" class="btn-grad text-white px-12 py-5 rounded-2xl font-black text-2xl shadow-2xl inline-block transform transition hover:scale-105">
+            サーバーに招待
+        </a>
+    </section>
+
+    <!-- フッター -->
+    <footer class="bg-white border-t border-gray-100 py-16">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex justify-center space-x-8 mb-8 text-3xl">
+                <a href="https://x.com/nextzzz2w22" target="_blank" class="text-gray-300 hover:text-black transition">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="https://github.com/konita2222" target="_blank" class="text-gray-300 hover:text-black transition">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+            </div>
+            <p class="text-gray-400 text-xs font-bold tracking-widest uppercase">
+                © 2024 Reminder Bot | Developed by konita2222 (Student Developer)
+            </p>
+            <p class="text-[10px] text-gray-300 mt-4 leading-relaxed max-w-lg mx-auto italic">
+                Developed with Gemini 3.1 Pro, DeepSeek, and Le Chat assistance.<br>
+                管理者権限必須 / 開発中ベータ版 / 修正にはお時間をいただく場合があります。
+            </p>
+        </div>
+    </footer>
+
+    <!-- スクリプト -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true, easing: 'ease-out-back' });
+
+        const aiBadge = document.getElementById('aiBadge');
+        const aiTooltip = document.getElementById('aiTooltip');
+        aiBadge.addEventListener('mouseenter', () => aiTooltip.classList.add('show'));
+        aiBadge.addEventListener('mouseleave', () => aiTooltip.classList.remove('show'));
+        
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) { nav.classList.add('shadow-md'); } 
+            else { nav.classList.remove('shadow-md'); }
+        });
+    </script>
+</body>
+</html>
