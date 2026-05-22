@@ -2,27 +2,191 @@
 <html lang="ja">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>konita_site</title>
-    <link rel="styleseet" href="css/indexcss.css">
+    
+    <!-- Googleフォント読み込み -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- CSSスタイル（ここにデザインを記述） -->
+    <style>
+        /* ========== 全体の設定 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ========== ヘッダーのデザイン ========== */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header div {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== ナビゲーションリスト ========== */
+        header ul {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+        }
+
+        header li {
+            margin: 0;
+        }
+
+        /* ========== ボタンのデザイン ========== */
+        #ko {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        #ko:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        #ko:active {
+            transform: translateY(0);
+        }
+
+        /* ========== リンクのデザイン ========== */
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* 画像リンクのデザイン */
+        header a[href*="dropbox.com"]:first-of-type {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        header a[href*="dropbox.com"]:first-of-type:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* ========== メインタイトル ========== */
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            margin: 60px 20px 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease;
+        }
+
+        /* ========== アニメーション ========== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 本文エリア ========== */
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        /* ========== スマホ対応（レスポンシブ） ========== */
+        @media (max-width: 600px) {
+            header div {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin: 40px 15px 20px;
+            }
+            
+            #ko {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
 </head>
+
 <body id="top">
+    
+    <!-- ========== ヘッダー ========== -->
     <header>
         <div>
-            <li><a href="index.html">ホーム</a></li>
-            <li><a href="https://www.google.com"><input id="ko" type="button" value="google"></a></li>
-            <li><a href="https://for314.com"><input id="ko" type="button" value="for314"></a></li>
-         <a href="https://www.dropbox.com/scl/fi/jzhrmxj23jc84w4jd980u/3aba925b-2571-4bd0-af1d-e58e57acb2d0.png?rlkey=wt56qgrnuc8lnx1u4r5z74eht&st=pfkpb4xa&dl=1">konita_picture</a>
-     <li><a href="https://www.dropbox.com/scl/fi/awtybk8933kzb1yg4fhjx/1-ver.2.83.zip?rlkey=qjzxacwm1l3fytjy0bvmnv79t&st=7xtoa5k8&dl=1"><input id="ko" type="button" value="download"></a></li>
+            <!--  navigation -->
+            <ul>
+                <li><a href="index.html">🏠 ホーム</a></li>
+                <li><a href="https://www.google.com"><button id="ko" type="button">🔍 google</button></a></li>
+                <li><a href="https://for314.com"><button id="ko" type="button">🎮 for314</button></a></li>
+            </ul>
+            
+            <!-- 画像リンク -->
+            <a href="https://www.dropbox.com/scl/fi/jzhrmxj23jc84w4jd980u/3aba925b-2571-4bd0-af1d-e58e57acb2d0.png?rlkey=wt56qgrnuc8lnx1u4r5z74eht&st=pfkpb4xa&dl=1">
+                🖼️ konita_picture
+            </a>
+            
+            <!-- ダウンロードボタン -->
+            <a href="https://www.dropbox.com/scl/fi/awtybk8933kzb1yg4fhjx/1-ver.2.83.zip?rlkey=qjzxacwm1l3fytjy0bvmnv79t&st=7xtoa5k8&dl=1">
+                <button id="ko" type="button">⬇️ download</button>
+            </a>
         </div>
     </header>
-    <h1>コニタサイト</h1>
-
+    
+    <!-- ========== メインコンテンツ ========== -->
+    <h1>🌟 コニタサイト 🌟</h1>
+    
+    <main>
+        <p>ようこそ！ここは「コニタサイト」です🎉</p>
+        <p>上のメニューから、いろんなページに移動できますよ✨</p>
+    </main>
 
 </body>
-
-
-
 </html>
