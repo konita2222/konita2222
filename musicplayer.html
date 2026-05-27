@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Music Player</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --accent-color: #38bdf8;
+            --text-color: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1e293b, var(--bg-color));
+            color: var(--text-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* プレイヤー外枠 */
+        .player-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 40px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* アートワーク（回転する円） */
+        .disk-area {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+        }
+
+        .disk {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #334155, #0f172a);
+            border: 8px solid #334155;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            animation: rotate 10s linear infinite;
+            animation-play-state: paused;
+        }
+
+        .playing .disk {
+            animation-play-state: running;
+        }
+
+        .disk-center {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 情報エリア */
+        h2 { margin: 10px 0 5px; font-weight: 600; letter-spacing: 1px; }
+        p { color: #94a3b8; font-size: 0.9em; margin-bottom: 25px; }
+
+        /* プログレスバー */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-color);
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--accent-color);
+            position: relative;
+        }
+
+        /* コントロール */
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s, color 0.2s;
+        }
+
+        .btn:hover { color: var(--accent-color); transform: scale(1.1); }
+        .btn-main { font-size: 48px; color: var(--accent-color); }
+
+        /* プレイリスト簡易表示 */
+        .playlist-info {
+            margin-top: 25px;
+            font-size: 0.8em;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-card" id="player">
+        <div class="disk-area">
+            <div class="disk">
+                <div class="disk-center"></div>
+            </div>
+        </div>
+
+        <h2 id="trackName">Track 01</h2>
+        <p id="artistName">Now Playing</p>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="prevTrack()">⏮</button>
+            <button class="btn btn-main" id="playBtn" onclick="togglePlay()">▶</button>
+            <button class="btn" onclick="nextTrack()">⏭</button>
+        </div>
+
+        <div class="playlist-info" id="playlistInfo">1 / 3</div>
+    </div>
+
+    <audio id="audio" src="1.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const playBtn = document.getElementById('playBtn');
+        const player = document.getElementById('player');
+        const trackName = document.getElementById('trackName');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const playlistInfo = document.getElementById('playlistInfo');
+
+        const tracks = ['1.mp3', '2.mp3', '3.mp3'];
+        let trackIndex = 0;
+
+        // 再生・一時停止
+        function togglePlay() {
+            if (audio.paused) {
+                audio.play();
+                playBtn.innerHTML = '⏸';
+                player.classList.add('playing');
+            } else {
+                audio.pause();
+                playBtn.innerHTML = '▶';
+                player.classList.remove('playing');
+            }
+        }
+
+        // 曲の読み込み
+        function loadTrack(index) {
+            audio.src = tracks[index];
+            trackName.innerText = `Track ${String(index + 1).padStart(2, '0')}`;
+            playlistInfo.innerText = `${index + 1} / ${tracks.length}`;
+            if (player.classList.contains('playing')) audio.play();
+        }
+
+        function nextTrack() {
+            trackIndex = (trackIndex + 1) % tracks.length;
+            loadTrack(trackIndex);
+        }
+
+        function prevTrack() {
+            trackIndex = (trackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(trackIndex);
+        }
+
+        // プログレスバー更新
+        audio.addEventListener('timeupdate', () => {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+        });
+
+        // シークバーのクリック操作
+        progressContainer.addEventListener('click', (e) => {
+            const width = progressContainer.clientWidth;
+            const clickX = e.offsetX;
+            audio.currentTime = (clickX / width) * audio.duration;
+        });
+
+        // 終了時に次へ
+        audio.addEventListener('ended', nextTrack);
+    </script>
+</body>
+</html>
