@@ -39,8 +39,8 @@
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column; /* リンクが増えたため縦に並べる構成に変更 */
+            gap: 15px;
             align-items: center;
             justify-content: center;
         }
@@ -48,7 +48,7 @@
         /* ========== ナビゲーションリスト ========== */
         header ul {
             display: flex;
-            flex-wrap: wrap; /* ボタンが増えたため、スマホ画面等で折り返せるように追加 */
+            flex-wrap: wrap; 
             list-style: none;
             gap: 8px;
             margin: 0;
@@ -61,7 +61,7 @@
         }
 
         /* ========== ボタンのデザイン ========== */
-        #ko {
+        .btn-ko {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
@@ -74,12 +74,12 @@
             font-family: 'Noto Sans JP', sans-serif;
         }
 
-        #ko:hover {
+        .btn-ko:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
-        #ko:active {
+        .btn-ko:active {
             transform: translateY(0);
         }
 
@@ -89,19 +89,27 @@
             color: inherit;
         }
 
-        /* 画像リンクのデザイン */
-        header a[href*="dropbox.com"]:first-of-type {
+        /* ドロップボックス等、個別の特別リンク用スタイル */
+        .special-link {
             background: white;
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: bold;
             color: #667eea;
+            border: 2px solid #667eea;
             transition: all 0.3s ease;
+            font-size: 14px;
         }
 
-        header a[href*="dropbox.com"]:first-of-type:hover {
+        .special-link:hover {
             background: #667eea;
             color: white;
+        }
+
+        /* 外部サイト用ボタン（元のスタイルを維持） */
+        .btn-external {
+            background: #e2e8f0;
+            color: #4a5568;
         }
 
         /* ========== メインタイトル ========== */
@@ -137,18 +145,23 @@
             margin-bottom: 40px;
         }
 
+        /* リストの見た目調整 */
+        main ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        main li {
+            margin-bottom: 8px;
+        }
+
         /* ========== スマホ対応（レスポンシブ） ========== */
         @media (max-width: 600px) {
-            header div {
-                flex-direction: column;
-            }
-            
             h1 {
                 font-size: 1.8rem;
                 margin: 40px 15px 20px;
             }
             
-            #ko {
+            .btn-ko {
                 width: 100%;
                 max-width: 250px;
             }
@@ -161,19 +174,39 @@
     <header>
         <div>
             <ul>
-                <li><a href="index.html">🏠 ホーム</a></li>
-                <li><a href="tetris-v4.1.html"><button id="ko" type="button">🕹️ テトリス</button></a></li>
-                <li><a href="https://www.google.com"><button id="ko" type="button">🔍 google</button></a></li>
-                <li><a href="https://for314.com"><button id="ko" type="button">🎮 for314</button></a></li>
+                <li><a href="index.html"><button class="btn-ko" type="button">🏠 ホーム</button></a></li>
+                <li><a href="konita.html"><button class="btn-ko" type="button">👤 コニタ</button></a></li>
+                <li><a href="tetris-v4.1.html"><button class="btn-ko" type="button">🕹️ テトリス</button></a></li>
+                <li><a href="music.html"><button class="btn-ko" type="button">🎵 音楽ページ</button></a></li>
+                <li><a href="link.html"><button class="btn-ko" type="button">🔗 リンク集</button></a></li>
+                <li><a href="pages.html"><button class="btn-ko" type="button">📄 ページ一覧</button></a></li>
             </ul>
-            
-            <a href="https://www.dropbox.com/scl/fi/jzhrmxj23jc84w4jd980u/3aba925b-2571-4bd0-af1d-e58e57acb2d0.png?rlkey=wt56qgrnuc8lnx1u4r5z74eht&st=pfkpb4xa&dl=1">
-                🖼️ konita_picture
-            </a>
-            
-            <a href="https://www.dropbox.com/scl/fi/awtybk8933kzb1yg4fhjx/1-ver.2.83.zip?rlkey=qjzxacwm1l3fytjy0bvmnv79t&st=7xtoa5k8&dl=1">
-                <button id="ko" type="button">⬇️ download</button>
-            </a>
+
+            <ul>
+                <li><a href="next.html"><button class="btn-ko btn-external" type="button">▶️ Next</button></a></li>
+                <li><a href="next-bot.html"><button class="btn-ko btn-external" type="button">🤖 Next Bot</button></a></li>
+                <li><a href="nexttale.html"><button class="btn-ko btn-external" type="button">💀 Nexttale</button></a></li>
+                <li><a href="sans.html"><button class="btn-ko btn-external" type="button">☠️ Sans</button></a></li>
+                <li><a href="sin.html"><button class="btn-ko btn-external" type="button">🔮 Sin</button></a></li>
+                <li><a href="myau1.html"><button class="btn-ko btn-external" type="button">🐾 Myau1</button></a></li>
+                <li><a href="dl.HTML"><button class="btn-ko btn-external" type="button">💾 DL</button></a></li>
+                <li><a href="2222.htm"><button class="btn-ko btn-external" type="button">❓ 2222</button></a></li>
+            </ul>
+
+            <ul>
+                <li><a href="https://www.google.com" target="_blank"><button class="btn-ko" type="button">🔍 Google</button></a></li>
+                <li><a href="https://for314.com" target="_blank"><button class="btn-ko" type="button">🎮 for314</button></a></li>
+                <li>
+                    <a class="special-link" href="https://www.dropbox.com/scl/fi/jzhrmxj23jc84w4jd980u/3aba925b-2571-4bd0-af1d-e58e57acb2d0.png?rlkey=wt56qgrnuc8lnx1u4r5z74eht&st=pfkpb4xa&dl=1">
+                        🖼️ konita_picture
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.dropbox.com/scl/fi/awtybk8933kzb1yg4fhjx/1-ver.2.83.zip?rlkey=qjzxacwm1l3fytjy0bvmnv79t&st=7xtoa5k8&dl=1">
+                        <button class="btn-ko" type="button">⬇️ download</button>
+                    </a>
+                </li>
+            </ul>
         </div>
     </header>
     
@@ -182,6 +215,14 @@
     <main>
         <p>ようこそ！ここは「コニタサイト」です🎉</p>
         <p>上のメニューから、いろんなページに移動できますよ✨</p>
+        
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h3>🎵 本日のBGM</h3>
+        <p>画像に含まれている音楽ファイルをここで聴くことができます：</p>
+        <audio controls src="music.mp3" style="margin-top: 10px; width: 100%; max-width: 400px;">
+            お使いのブラウザはオーディオ要素をサポートしていません。
+        </audio>
     </main>
 
 </body>
