@@ -279,10 +279,10 @@ class SevenBag {
     }
     refill() {
         let newBag = [1, 2, 3, 4, 5, 6, 7];
-        // フィッシャー–イェーツのシャッフル
+        // フィッシャー–イェーツのシャッフル (バグ修正済)
         for (let i = 6; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [newBag[i], newBag[newBag[j]]] = [newBag[j], newBag[i]];
+            [newBag[i], newBag[j]] = [newBag[j], newBag[i]];
         }
         this.bag = this.bag.concat(newBag);
     }
@@ -338,12 +338,10 @@ function initQueue() {
     bagSystem = new SevenBag();
     bagSystem.refill(); // 最初の袋を用意
     
-    // 最初の袋の「1個目」がS(4)またはZ(5)の場合、それ以外のミノが出るまで引き直すか、位置を交換する。
-    // ここでは解説のルール通り、最初の袋の先頭1個目がSかZだった場合、袋の中の安全なミノ(1,2,3,6,7)と位置を入れ替えます。
+    // 最初の袋の「1個目」がS(4)またはZ(5)の場合、それ以外の安全なミノと位置を交換する。
     if (bagSystem.bag[0] === 4 || bagSystem.bag[0] === 5) {
         for (let i = 1; i < 7; i++) {
             if (bagSystem.bag[i] !== 4 && bagSystem.bag[i] !== 5) {
-                // 交換
                 [bagSystem.bag[0], bagSystem.bag[i]] = [bagSystem.bag[i], bagSystem.bag[0]];
                 break;
             }
@@ -351,7 +349,7 @@ function initQueue() {
     }
 
     player.nextQueue = [];
-    // プレビュー用にストックを溜める
+    // プレビュー表示用(4つ)＋予備を含めてストック
     for(let i = 0; i < 6; i++) {
         player.nextQueue.push(bagSystem.next());
     }
