@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>近未来コネクト｜便利ページまとめ</title>
-    <!-- 使用 Google Fonts 增强未来感字体 -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 (無料アイコン) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -23,7 +21,6 @@
             scroll-behavior: smooth;
         }
 
-        /* 近未来的グリッド背景＋グローエフェクト */
         .bg-fx {
             position: fixed;
             top: 0;
@@ -60,16 +57,13 @@
             height: 80vw;
         }
 
-        /* メインコンテナ */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem 2rem 5rem;
             position: relative;
-            backdrop-filter: blur(0px);
         }
 
-        /* ヘッダー 未来的なネオン */
         .hero {
             text-align: center;
             margin-bottom: 3rem;
@@ -114,7 +108,6 @@
             font-weight: 500;
         }
 
-        /* タブ切り替えUI (近未来的スイッチ) */
         .tabs-wrap {
             display: flex;
             justify-content: center;
@@ -136,12 +129,9 @@
             color: #ccf4ff;
             font-family: 'Space Grotesk', monospace;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        .tab-btn i {
-            margin-right: 8px;
-        }
+        .tab-btn i { margin-right: 8px; }
 
         .tab-btn.active {
             background: linear-gradient(95deg, #00ccff22, #00aaff55);
@@ -157,7 +147,6 @@
             transform: translateY(-2px);
         }
 
-        /* カードグリッド */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -165,7 +154,6 @@
             margin-top: 1rem;
         }
 
-        /* 未来型カード */
         .card {
             background: rgba(12, 20, 28, 0.65);
             backdrop-filter: blur(12px);
@@ -201,10 +189,9 @@
         }
 
         .card h3 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.3px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -216,7 +203,6 @@
             background: rgba(0, 255, 255, 0.2);
             padding: 0.2rem 0.7rem;
             border-radius: 20px;
-            font-weight: 400;
             color: #9effff;
         }
 
@@ -261,7 +247,6 @@
             box-shadow: 0 0 8px cyan;
         }
 
-        /* フッター */
         .footer-note {
             text-align: center;
             margin-top: 4rem;
@@ -271,42 +256,23 @@
             opacity: 0.6;
         }
 
-        /* レスポンシブ */
         @media (max-width: 700px) {
-            .container {
-                padding: 1rem;
-            }
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .tab-btn {
-                padding: 0.5rem 1.2rem;
-                font-size: 0.8rem;
-            }
-            .grid {
-                gap: 1rem;
-            }
+            .container { padding: 1rem; }
+            .hero h1 { font-size: 2rem; }
+            .tab-btn { padding: 0.5rem 1.2rem; font-size: 0.8rem; }
+            .grid { gap: 1rem; }
         }
 
-        /* アニメーション表示用 */
         .tab-pane {
             display: none;
             animation: fadeSlideUp 0.45s ease-out forwards;
         }
 
-        .tab-pane.active-pane {
-            display: block;
-        }
+        .tab-pane.active-pane { display: block; }
 
         @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -320,19 +286,17 @@
         <h1><i class="fas fa-microchip"></i> 近未来コネクト</h1>
         <div class="sub">
             <span class="chip"><i class="fas fa-bolt"></i> 次世代ツール集</span>
-            <span class="chip"><i class="fas fa-globe"></i> グローバル+中華製先端サービス</span>
+            <span class="chip"><i class="fas fa-globe"></i> 拡張インデックス版</span>
         </div>
-        <p style="margin-top: 1rem; max-width: 700px; margin-inline: auto; font-weight: 300;">AI・生産性・翻訳・デザイン・クラウド — あなたの可能性を拡張する便利ページを厳選</p>
+        <p style="margin-top: 1rem; max-width: 700px; margin-inline: auto; font-weight: 300;">AI・生産性・グラフィック・開発支援ツールを大量追加した最先端ダッシュボード</p>
     </div>
 
-    <!-- タブ切り替え部 (オール, 中華製特集, グローバル＆ユーティリティ) -->
     <div class="tabs-wrap">
         <div class="tab-btn active" data-tab="all"><i class="fas fa-cubes"></i> すべてのツール</div>
         <div class="tab-btn" data-tab="cn"><i class="fas fa-flag-china"></i> 中華製ページ特集</div>
         <div class="tab-btn" data-tab="global"><i class="fas fa-network-wired"></i> グローバル・ユーティリティ</div>
     </div>
 
-    <!-- 全カードコンテンツ (動的生成のためJSで管理、ただしマークアップ内蔵してJSでフィルタでもOKだが保守性のため埋め込み) -->
     <div id="tab-all" class="tab-pane active-pane">
         <div class="grid" id="all-grid"></div>
     </div>
@@ -344,63 +308,56 @@
     </div>
 
     <div class="footer-note">
-        <i class="fas fa-satellite-dish"></i> 近未来的ダッシュボード | 収録サイトはすべて安全な公知サービス | 随時アップデート
+        <i class="fas fa-satellite-dish"></i> 近未来的ダッシュボード | 随時アップデート
     </div>
 </div>
 
 <script>
-    // 便利ページデータ定義 (中華製＋グローバルハイブリッド)
     const pages = [
-        // === 中華製クオリティ (中国サービス・ツール) ===
-        { name: "DeepSeek (深度求索)", icon: "fa-brain", desc: "最先端の大規模言語モデル (無料)。文章生成・コード・分析が驚異的。中国製AIのフロントランナー。", tags: ["cn", "ai"], url: "https://chat.deepseek.com/", category: "cn" },
-        { name: "通義千问 (Tongyi Qianwen)", icon: "fa-comments", desc: "アリババグループのLLM、文章作成から要約、データ分析まで多用途。", tags: ["cn", "ai"], url: "https://tongyi.aliyun.com/", category: "cn" },
-        { name: "文心一言 (ERNIE Bot)", icon: "fa-feather-alt", desc: "Baidu製、中国を代表する生成AI。画像生成や知識検索にも強い。", tags: ["cn", "ai"], url: "https://yiyan.baidu.com/", category: "cn" },
-        { name: "Canva (中国版も)", icon: "fa-paintbrush", desc: "世界のデザインツールだが、中国でも万能テンプレート・コラボ。", tags: ["cn", "design"], url: "https://www.canva.com/", category: "global" }, // globalに近いが便利なのでピック
-        { name: "剪映 (CapCut Web)", icon: "fa-video", desc: "ByteDance製、プロ級動画編集がブラウザで無料。テンプレート多数。", tags: ["cn", "media"], url: "https://www.capcut.com/", category: "cn" },
-        { name: "WPS Office 雲オフィス", icon: "fa-file-alt", desc: "中国発の統合オフィススイート。オンライン編集・PDF変換・共同作業。", tags: ["cn", "productivity"], url: "https://www.kdocs.cn/", category: "cn" },
-        { name: "百度翻訳 (Baidu Fanyi)", icon: "fa-language", desc: "高精度な中国語翻訳＆多言語対応。AIニューラル翻訳が強力。", tags: ["cn", "translate"], url: "https://fanyi.baidu.com/", category: "cn" },
-        { name: "Quark (夸克)", icon: "fa-search", desc: "スマートブラウザ＆AI検索・クラウド機能搭載。中国で人気の次世代ブラウザ。", tags: ["cn", "utility"], url: "https://www.quark.cn/", category: "cn" },
+        // === 中華製クオリティ ===
+        { name: "DeepSeek (深度求索)", icon: "fa-brain", desc: "驚異的なコード・ロジック能力を持つ無料の爆速AI。世界を震撼させているトップランナー。", tags: ["cn", "ai"], url: "https://chat.deepseek.com/", category: "cn" },
+        { name: "Kimi 智能助手", icon: "fa-rocket", desc: "超長文のデータ読み込みや論文解析に非常に強い、中国本土で大人気のアシスタントAI。", tags: ["cn", "ai"], url: "https://kimi.moonshot.cn/", category: "cn" },
+        { name: "通義千问 (Tongyi Qianwen)", icon: "fa-comments", desc: "アリババグループが開発したLLM。ビジネス資料の要約、多言語対話に優れる。", tags: ["cn", "ai"], url: "https://tongyi.aliyun.com/", category: "cn" },
+        { name: "文心一言 (ERNIE Bot)", icon: "fa-feather-alt", desc: "Baidu（百度）が誇るフラッグシップAI。中国国内の情報検索や知識ベースに最適。", tags: ["cn", "ai"], url: "https://yiyan.baidu.com/", category: "cn" },
+        { name: "剪映 (CapCut Web)", icon: "fa-video", desc: "ByteDance製。大人気動画編集アプリのブラウザ版。AI自動字幕や高度なエフェクトが無料。", tags: ["cn", "media"], url: "https://www.capcut.com/", category: "cn" },
+        { name: "WPS Office 雲オフィス", icon: "fa-file-alt", desc: "非常に軽快なオンラインオフィススイート。PDF相互変換や複数人での共同編集に対応。", tags: ["cn", "productivity"], url: "https://www.kdocs.cn/", category: "cn" },
+        { name: "百度翻訳 (Baidu Fanyi)", icon: "fa-language", desc: "最先端のニューラルネットワーク翻訳。特に中国語⇔日本語の間では驚異的な自然さを誇る。", tags: ["cn", "translate"], url: "https://fanyi.baidu.com/", category: "cn" },
+        { name: "Quark (夸克)", icon: "fa-search", desc: "AI検索、クラウドストレージ、ドキュメントスキャンを高次元で融合した中国発の次世代ブラウザポータル。", tags: ["cn", "utility"], url: "https://www.quark.cn/", category: "cn" },
+        { name: "Kling AI (快手)", icon: "fa-film", desc: "極めてリアルな動画を生成できると世界中で話題になった、中国発の最先端AI動画生成プラットフォーム。", tags: ["cn", "media"], url: "https://klingai.com/", category: "cn" },
 
         // === グローバル/その他 近未来的便利ツール ===
-        { name: "Notion AI", icon: "fa-tasks", desc: "オールインワンワークスペース + AIアシスタント。知識管理の最先端。", tags: ["global", "productivity"], url: "https://www.notion.so/", category: "global" },
-        { name: "Gamma AI スライド", icon: "fa-chalkboard", desc: "AIが美しいプレゼンを自動生成。未来の資料作成体験。", tags: ["global", "ai"], url: "https://gamma.app/", category: "global" },
-        { name: "Perplexity AI", icon: "fa-question-circle", desc: "AI検索エンジン。引用付きで最新情報を要約。リサーチに革命。", tags: ["global", "search"], url: "https://www.perplexity.ai/", category: "global" },
-        { name: "Replicate", icon: "fa-cloud-upload-alt", desc: "機械学習モデルをクラウドで実行。画像生成・LLMをAPI/UIで。", tags: ["global", "dev"], url: "https://replicate.com/", category: "global" },
-        { name: "Excalidraw", icon: "fa-pencil-ruler", desc: "手書き風ダイアグラム／ホワイトボード。暗いテーマでのコラボに最適", tags: ["global", "design"], url: "https://excalidraw.com/", category: "global" },
-        { name: "TinyWow", icon: "fa-magic", desc: "無料ユーティリティ (PDF変換・画像編集・動画切り抜き) 手間いらず。", tags: ["global", "utility"], url: "https://tinywow.com/", category: "global" },
-        { name: "Remove.bg (背景透過)", icon: "fa-image", desc: "AI背景透過、高品質な処理を高速で提供。デザイン必須。", tags: ["global", "media"], url: "https://www.remove.bg/", category: "global" },
-        { name: "CloudConvert", icon: "fa-exchange-alt", desc: "あらゆるファイル変換 (動画、音声、ドキュメント) クラウドネイティブ。", tags: ["global", "utility"], url: "https://cloudconvert.com/", category: "global" },
-        { name: "Hugging Face Spaces", icon: "fa-robot", desc: "AIデモ・モデルを試せる。未来のAIハブ。", tags: ["global", "ai"], url: "https://huggingface.co/spaces", category: "global" },
-        { name: "Ray.so", icon: "fa-code", desc: "コードを美しい画像に変換。開発者＆SNS共有に最適。", tags: ["global", "dev"], url: "https://ray.so/", category: "global" }
+        { name: "ChatGPT (OpenAI)", icon: "fa-robot", desc: "AI時代の原点にして頂点。最新モデルが高度な推論、画像認識、音声対話を実現。", tags: ["global", "ai"], url: "https://chatgpt.com/", category: "global" },
+        { name: "Claude (Anthropic)", icon: "fa-pen-fancy", desc: "極めて自然で人間らしい文章作成と、極めて美しいプログラミングコードを生成する高性能AI。", tags: ["global", "ai"], url: "https://claude.ai/", category: "global" },
+        { name: "Perplexity AI", icon: "fa-question-circle", desc: "ネット上の最新情報をリアルタイム検索し、情報ソースのリンク付きで回答をまとめる革新的な検索AI。", tags: ["global", "search"], url: "https://www.perplexity.ai/", category: "global" },
+        { name: "v0 by Vercel", icon: "fa-code-branch", desc: "テキストで指示するだけで、実用的なUIデザインやフロントエンドコードを瞬時に自動生成する開発AI。", tags: ["global", "dev"], url: "https://v0.dev/", category: "global" },
+        { name: "GitHub", icon: "fa-git-alt", desc: "世界中の開発者がコードを共有する聖地。プログラミング学習やオープンソースの宝庫。", tags: ["global", "dev"], url: "https://github.com/", category: "global" },
+        { name: "Midjourney", icon: "fa-palette", desc: "Discord上で動作する、圧倒的な芸術性とクオリティを誇る最高峰のイラスト・画像生成AI。", tags: ["global", "design"], url: "https://www.midjourney.com/", category: "global" },
+        { name: "Civitai", icon: "fa-images", desc: "Stable Diffusionなどの画像生成AIのモデルやリソースが世界中から集まる最大級のコミュニティサイト。", tags: ["global", "design"], url: "https://civitai.com/", category: "global" },
+        { name: "Notion", icon: "fa-tasks", desc: "メモ、タスク、データベース、ドキュメント管理をすべて一元化できる最強の生産性向上ツール。", tags: ["global", "productivity"], url: "https://www.notion.so/", category: "global" },
+        { name: "Gamma App", icon: "fa-chalkboard", desc: "テキストやメモを入力するだけで、プロレベルの美しいプレゼン用スライドを自動構築するデザインAI。", tags: ["global", "ai"], url: "https://gamma.app/", category: "global" },
+        { name: "Excalidraw", icon: "fa-pencil-ruler", desc: "ブラウザ上でサクサク描ける手書き風ホワイトボード。図解やアイデアのブレインストーミングに最適。", tags: ["global", "design"], url: "https://excalidraw.com/", category: "global" },
+        { name: "TinyWow", icon: "fa-magic", desc: "PDF変換、画像加工、動画編集、音声抽出など、日常のちょっとした作業を完全無料で処理できる万能ツール集。", tags: ["global", "utility"], url: "https://tinywow.com/", category: "global" },
+        { name: "Remove.bg", icon: "fa-image", desc: "画像をアップロードするだけで、被写体の背景をわずか5秒で正確に消去・透過するAIサービス。", tags: ["global", "media"], url: "https://www.remove.bg/", category: "global" },
+        { name: "CloudConvert", icon: "fa-exchange-alt", desc: "数百種類以上のファイル形式（動画・音楽・ドキュメント）を安全に高速変換するクラウドコンバーター。", tags: ["global", "utility"], url: "https://cloudconvert.com/", category: "global" },
+        { name: "Hugging Face Spaces", icon: "fa-robot", desc: "世界中の最新AIモデルのデモを、ブラウザ上で実際に触って試すことができるWeb最大のAIコミュニティプラットフォーム。", tags: ["global", "ai"], url: "https://huggingface.co/spaces", category: "global" },
+        { name: "Ray.so", icon: "fa-code", desc: "ソースコードを貼り付けるだけで、エンジニアのSNS共有に最適な美しいグラデーション背景付きの画像に変換。", tags: ["global", "dev"], url: "https://ray.so/", category: "global" },
+        { name: "Canva", icon: "fa-paintbrush", desc: "豊富なテンプレートから、サムネイルやポスター、ロゴをドラッグ＆ドロップだけで作れる万能デザインプラットフォーム。", tags: ["global", "design"], url: "https://www.canva.com/", category: "global" }
     ];
 
-    // 補足: 中華製でもっと明示的に入れたいページはさらに追加可能。しかし既存で十分未来的便利さをカバー
-    // さらに、既存 "Canva" はグローバルだが中華製っぽさもあるため中国的便利さ一緒に分類してもいいがtaxonomy維持
-    // ただしフィルタで中華製タグには 「cn」カテゴリをもつものとしてフィルタ。
     function renderCategory(categoryId, containerId) {
         let filtered = [];
-        if (categoryId === 'all') {
-            filtered = [...pages];
-        } else if (categoryId === 'cn') {
-            filtered = pages.filter(p => p.category === 'cn');
-        } else if (categoryId === 'global') {
-            filtered = pages.filter(p => p.category === 'global');
-        }
+        if (categoryId === 'all') { filtered = [...pages]; } 
+        else if (categoryId === 'cn') { filtered = pages.filter(p => p.category === 'cn'); } 
+        else if (categoryId === 'global') { filtered = pages.filter(p => p.category === 'global'); }
+        
         const container = document.getElementById(containerId);
         if (!container) return;
-        if (filtered.length === 0) {
-            container.innerHTML = `<div style="text-align:center;padding:3rem; background:rgba(0,0,0,0.4); border-radius:40px;"><i class="fas fa-database"></i> 該当ページは準備中です... 近未来リストを更新予定</div>`;
-            return;
-        }
+        
         let html = '';
         for (let item of filtered) {
-            // 中華製バッジ判定
-            let badgeHtml = '';
-            if (item.category === 'cn') {
-                badgeHtml = `<span class="badge cn"><i class="fas fa-flag-china"></i> 中華製先端</span>`;
-            } else {
-                badgeHtml = `<span class="badge"><i class="fas fa-globe-americas"></i> グローバル</span>`;
-            }
+            let badgeHtml = item.category === 'cn' 
+                ? `<span class="badge cn"><i class="fas fa-flag-china"></i> 中華製先端</span>` 
+                : `<span class="badge"><i class="fas fa-globe-americas"></i> グローバル</span>`;
             html += `
                 <div class="card">
                     <div class="card-content">
@@ -419,19 +376,10 @@
         container.innerHTML = html;
     }
 
-    // XSS対策簡易エスケープ
     function escapeHtml(str) {
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
-        });
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
     }
 
-    // 初期レンダリング & タブ切り替え
     function initTabs() {
         renderCategory('all', 'all-grid');
         renderCategory('cn', 'cn-grid');
@@ -442,27 +390,16 @@
         tabs.forEach(btn => {
             btn.addEventListener('click', () => {
                 const tabId = btn.getAttribute('data-tab');
-                // アクティブクラス切り替え
                 tabs.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                // pane表示
                 panes.forEach(pane => pane.classList.remove('active-pane'));
-                if (tabId === 'all') {
-                    document.getElementById('tab-all').classList.add('active-pane');
-                } else if (tabId === 'cn') {
-                    document.getElementById('tab-cn').classList.add('active-pane');
-                } else if (tabId === 'global') {
-                    document.getElementById('tab-global').classList.add('active-pane');
-                }
+                document.getElementById(`tab-${tabId}`).classList.add('active-pane');
             });
         });
     }
 
-    // 補足: 近未来的なジェスチャー、あと中華製ページを全面的にフィーチャーしていることも明確に。
-    // さらに深層: カスタムフォントダウンロード完了後にもグリッド演出
     window.addEventListener('DOMContentLoaded', () => {
         initTabs();
-        // 追加: ページロード時のフェード（微細）
         document.body.style.opacity = '0';
         setTimeout(() => {
             document.body.style.transition = 'opacity 0.5s ease';
@@ -470,8 +407,5 @@
         }, 50);
     });
 </script>
-
-<!-- いくつか追加の中華製サービスを明示的に含む（完全なリストではないが便利さ重視） 
-     デザインコードに組み込み済み -->
 </body>
 </html>

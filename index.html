@@ -68,8 +68,8 @@
             border-bottom: 2px solid #0ff;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
             padding: 20px 24px;
-            /* position: sticky; を解除 */
-            position: relative; 
+            /* position: sticky; を解除して通常スクロールへ */
+            position: relative;
             z-index: 30;
         }
 
@@ -79,8 +79,8 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 32px;
-            row-gap: 28px;
+            gap: 24px;
+            row-gap: 24px;
         }
 
         .category {
@@ -90,7 +90,7 @@
             border-radius: 18px;
             backdrop-filter: blur(4px);
             min-width: 200px;
-            flex: 1 1 220px;
+            flex: 1 1 240px;
             transition: all 0.2s;
         }
 
@@ -103,7 +103,7 @@
         .category-title {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 2px;
             margin-bottom: 12px;
             color: #0ff;
@@ -118,18 +118,18 @@
         .category-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
         }
 
-        /* サイバーボタン統一 */
+        /* サイバーボタン */
         .cyber-btn {
             background: linear-gradient(135deg, #10182f, #050a15);
             border: 1px solid #0ff;
             color: #b3f0ff;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 28px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             font-family: 'Inter', monospace;
             cursor: pointer;
@@ -154,7 +154,7 @@
             transform: translateY(1px);
         }
 
-        /* 特別アクセント(全ページ・フィルターボタン用) */
+        /* フィルターボタン専用カラー */
         .btn-all {
             background: linear-gradient(95deg, #0a1a3a, #120b2a);
             border-color: #f0f;
@@ -166,7 +166,6 @@
             background: #f0f1a;
         }
         
-        /* アクティブなフィルターボタンのスタイル */
         .cyber-btn.filter-active {
             background: #f0f3;
             border-color: #f0f;
@@ -209,7 +208,7 @@
         }
 
         .welcome-text {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 24px;
             border-left: 3px solid #0ff;
             padding-left: 20px;
@@ -249,10 +248,10 @@
 
         @media (max-width: 760px) {
             .nav-grid {
-                gap: 18px;
+                gap: 16px;
             }
             .category {
-                min-width: 170px;
+                min-width: 100%;
             }
             h1 {
                 font-size: 2rem;
@@ -274,7 +273,7 @@
     <div class="nav-grid">
         <div class="category">
             <div class="category-title">
-                <span>🔮 ALL</span> <span style="font-size:0.8rem;">//カテゴリー選別</span>
+                <span>🔮 ALL</span> <span style="font-size:0.75rem;">//カテゴリー選別</span>
             </div>
             <div class="category-buttons">
                 <button class="cyber-btn btn-all filter-btn filter-active" data-target="全部">🌐 すべて表示</button>
@@ -291,6 +290,8 @@
             </div>
             <div class="category-buttons">
                 <a href="https://www.google.com" target="_blank" class="cyber-btn">🔍 Google</a>
+                <a href="https://www.deepl.com/translator" target="_blank" class="cyber-btn">🌐 DeepL翻訳</a>
+                <a href="https://wikipedia.org" target="_blank" class="cyber-btn">📖 Wikipedia</a>
             </div>
         </div>
 
@@ -302,7 +303,7 @@
                 <a href="https://konita2222.github.io/tetris/" target="_blank" class="cyber-btn" style="border-color:#f0f;">🕹️ テトリス トップ</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.1.html" target="_blank" class="cyber-btn">🟦 tetris ver4.1</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.3.html" target="_blank" class="cyber-btn">🟩 tetris ver4.3</a>
-                <a href="https://konita2222.github.io/tetris/tetris-v4.3.1.html" target="_blank" class="cyber-btn">⚡ tetris ver 4.4 (beta)</a>
+                <a href="https://konita2222.github.io/tetris/tetris-v4.3.1.html" target="_blank" class="cyber-btn">⚡ ver 4.4 (beta)</a>
             </div>
         </div>
 
@@ -311,8 +312,9 @@
                 <span>📚 SCHOOL</span> <span>//学習</span>
             </div>
             <div class="category-buttons">
-                <a href="https://classroom.google.com/h" target="_blank" class="cyber-btn">📖 Google Classroom</a>
+                <a href="https://classroom.google.com/h" target="_blank" class="cyber-btn">📖 Classroom</a>
                 <a href="https://ed-cl.com/dashboard" target="_blank" class="cyber-btn">📘 まなびポケット</a>
+                <a href="https://www.nhk.or.jp/nhkworld/" target="_blank" class="cyber-btn">📺 NHK WORLD</a>
             </div>
         </div>
 
@@ -332,11 +334,11 @@
 <main>
     <div class="welcome-text">
         💠 セキュリティ・プロトコル: 接続確立 :: ようこそ、ハッカーさん。<br>
-        上のカテゴリから各次元ゲートへアクセス可能です。上の「🔮 ALL」から表示の切り替えができます。<br>
+        上の「🔮 ALL」で下のデジタルカタログをカテゴリー別に高速フィルタリングできます。<br>
         <span style="font-size:0.85rem; color:#8df;">🔗 すべてのリンクはネオン認証済み — 安全にアクセスできます。</span>
     </div>
 
-    <div id="allLinksContainer" style="margin-top: 10px; margin-bottom: 20px; background: #02102040; border-radius: 24px; padding: 12px 16px; border: 1px dashed #0ff; transition: 0.2s;">
+    <div id="allLinksContainer" style="margin-top: 10px; margin-bottom: 20px; background: #02102040; border-radius: 24px; padding: 16px; border: 1px dashed #0ff;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <span style="font-family: monospace; font-weight: bold; color:#0ff;">[ 📡 <span id="catalogTitle">全リンク</span>・カタログ ]</span>
             <button id="toggleAllLinksBtn" class="cyber-btn" style="padding: 4px 12px;">🗂️ 表示/非表示</button>
@@ -353,7 +355,6 @@
         <audio controls src="music.mp3" style="margin-top: 8px;">
             お使いのブラウザではオーディエンスに対応していません。
         </audio>
-        <div style="margin-top: 12px; font-size: 0.7rem; opacity: 0.7;">⚡ コニタシグナル :: ハッキング推奨周波数</div>
     </div>
     <div class="footer-glow">
         <span>✦ サイバー領域 ✦ すべてのデータは暗号化済み ✦</span>
@@ -361,32 +362,28 @@
 </main>
 
 <script>
-    // 定義: 全てのリンク (配列) ※追加項目「テトリス トップページ」を反映
+    // データ定義（追加項目：テトリス トップページ、DeepL、Wikipedia、NHK追加）
     const allLinksData = [
         { name: "🔍 Google", url: "https://www.google.com", category: "ツール" },
+        { name: "🌐 DeepL翻訳", url: "https://www.deepl.com/translator", category: "ツール" },
+        { name: "📖 Wikipedia", url: "https://wikipedia.org", category: "ツール" },
         { name: "🕹️ テトリス トップ", url: "https://konita2222.github.io/tetris/", category: "メイン" },
         { name: "🟦 tetris ver4.1", url: "https://konita2222.github.io/tetris/tetris-v4.1.html", category: "メイン" },
         { name: "🟩 tetris ver4.3", url: "https://konita2222.github.io/tetris/tetris-v4.3.html", category: "メイン" },
         { name: "⚡ tetris ver4.3.1 (beta)", url: "https://konita2222.github.io/tetris/tetris-v4.3.1.html", category: "メイン" },
         { name: "📖 Google Classroom", url: "https://classroom.google.com/h", category: "学校" },
         { name: "📘 まなびポケット", url: "https://ed-cl.com/dashboard", category: "学校" },
+        { name: "📺 NHK WORLD", url: "https://www.nhk.or.jp/nhkworld/", category: "学校" },
         { name: "📄 ページ一覧 (まとめ)", url: "https://konita2222.github.io/konita2222/pages.html", category: "ページまとめ" }
     ];
     
-    // 現在選択されているカテゴリーの保持（初期値は全部）
-    let currentFilter = "全部";
-
-    // 動的に全リンクリストを描写（フィルター機能付き）
     function renderFullLinksList(filter = "全部") {
         const container = document.getElementById("fullLinksList");
         const titleSpan = document.getElementById("catalogTitle");
         if (!container) return;
         container.innerHTML = "";
         
-        // タイトルテキストの更新
         titleSpan.textContent = filter === "全部" ? "全リンク" : `カテゴリー [${filter}]`;
-
-        // 配列から条件に合うものを抽出
         const filteredData = allLinksData.filter(link => filter === "全部" || link.category === filter);
 
         filteredData.forEach(link => {
@@ -398,16 +395,13 @@
             card.style.justifyContent = "space-between";
             card.style.background = "#07122acc";
             card.style.border = "1px solid #2af";
-            card.style.textDecoration = "none";
             card.style.padding = "8px 14px";
             card.style.borderRadius = "30px";
-            card.style.transition = "0.1s";
             card.innerHTML = `<span>${link.name}</span><span style="font-size:0.7rem; opacity:0.7;"> ➔ ${link.category}</span>`;
             container.appendChild(card);
         });
     }
     
-    // トグル表示機能
     const toggleBtn = document.getElementById("toggleAllLinksBtn");
     const linksListDiv = document.getElementById("fullLinksList");
     const containerDiv = document.getElementById("allLinksContainer");
@@ -424,56 +418,28 @@
         });
     }
     
-    // カテゴリーフィルターボタン群のイベント設定
     const filterButtons = document.querySelectorAll(".filter-btn");
     filterButtons.forEach(btn => {
-        btn.addEventListener("click", (e) => {
+        btn.addEventListener("click", () => {
             const target = btn.getAttribute("data-target");
-            currentFilter = target;
-
-            // ボタンのアクティブクラス切り替え
             filterButtons.forEach(b => b.classList.remove("filter-active"));
             btn.classList.add("filter-active");
 
-            // リストを再描写してコンテナを表示状態にする
             if (linksListDiv && linksListDiv.style.display === "none") {
                 linksListDiv.style.display = "grid";
                 if(toggleBtn) toggleBtn.innerHTML = "🗂️ 折りたたむ";
             }
             renderFullLinksList(target);
 
-            // カタログエリアへスマートスクロールしてネオン発光演出
             containerDiv.scrollIntoView({ behavior: "smooth", block: "center" });
             containerDiv.style.transition = "0.2s";
             containerDiv.style.boxShadow = "0 0 0 2px cyan, 0 0 15px magenta";
-            setTimeout(() => {
-                if(containerDiv) containerDiv.style.boxShadow = "";
-            }, 1000);
+            setTimeout(() => { if(containerDiv) containerDiv.style.boxShadow = ""; }, 1000);
         });
     });
     
-    // 初回読み込み時のレンダリング
     renderFullLinksList();
-    
     if(linksListDiv) linksListDiv.style.display = "grid";
-    if(toggleBtn) toggleBtn.innerHTML = "🗂️ 折りたたむ";
-    
-    // アクセシビリティ・選択の追加スタイル
-    const styleGlow = document.createElement('style');
-    styleGlow.textContent = `
-        .cyber-btn:focus-visible {
-            outline: 2px solid #ff44ff;
-            outline-offset: 2px;
-        }
-        ::selection {
-            background: #0ff;
-            color: #010018;
-        }
-    `;
-    document.head.appendChild(styleGlow);
-    
-    console.log("CYBER MODE ACTIVE — カテゴリ選択・通常スクロール・テトリストップ追加完了");
 </script>
-
 </body>
 </html>
