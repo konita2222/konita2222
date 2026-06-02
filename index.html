@@ -61,15 +61,15 @@
             z-index: 2;
         }
 
-        /* ===== ヘッダー / ネオンガラス ===== */
+        /* ===== ヘッダー / ネオンガラス (固定解除・通常スクロール) ===== */
         header {
             background: rgba(5, 10, 25, 0.75);
             backdrop-filter: blur(12px);
             border-bottom: 2px solid #0ff;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
             padding: 20px 24px;
-            position: sticky;
-            top: 0;
+            /* position: sticky; を解除 */
+            position: relative; 
             z-index: 30;
         }
 
@@ -154,7 +154,7 @@
             transform: translateY(1px);
         }
 
-        /* 特別アクセント(全ページボタン用) */
+        /* 特別アクセント(全ページ・フィルターボタン用) */
         .btn-all {
             background: linear-gradient(95deg, #0a1a3a, #120b2a);
             border-color: #f0f;
@@ -164,6 +164,14 @@
         .btn-all:hover {
             border-color: #ff44ff;
             background: #f0f1a;
+        }
+        
+        /* アクティブなフィルターボタンのスタイル */
+        .cyber-btn.filter-active {
+            background: #f0f3;
+            border-color: #f0f;
+            color: #fff;
+            box-shadow: 0 0 12px #f0f;
         }
 
         /* タイトル */
@@ -264,19 +272,19 @@
 
 <header>
     <div class="nav-grid">
-        <!-- カテゴリ: すべて (全ページリンク) -->
         <div class="category">
             <div class="category-title">
-                <span>🔮 ALL</span> <span style="font-size:0.8rem;">//全ページ</span>
+                <span>🔮 ALL</span> <span style="font-size:0.8rem;">//カテゴリー選別</span>
             </div>
             <div class="category-buttons">
-                <a href="#" class="cyber-btn btn-all" id="allPagesBtn">🌐 すべてのページ</a>
-                <!-- モーダルや簡易リストではなく、一覧表示用ドロップダウン？要件に「ページまとめ」が別にあるため、
-                     ここでは「すべての以下のページ」を表示する機能を実装: モーダルまたはインライン表示 -->
+                <button class="cyber-btn btn-all filter-btn filter-active" data-target="全部">🌐 すべて表示</button>
+                <button class="cyber-btn btn-all filter-btn" data-target="ツール">🛠️ ツール</button>
+                <button class="cyber-btn btn-all filter-btn" data-target="メイン">🎮 メイン</button>
+                <button class="cyber-btn btn-all filter-btn" data-target="学校">📚 学校</button>
+                <button class="cyber-btn btn-all filter-btn" data-target="ページまとめ">📑 まとめ</button>
             </div>
         </div>
 
-        <!-- カテゴリ: ツール -->
         <div class="category">
             <div class="category-title">
                 <span>🛠️ TOOLS</span> <span>//ツール</span>
@@ -286,19 +294,18 @@
             </div>
         </div>
 
-        <!-- カテゴリ: メイン (テトリス各種) -->
         <div class="category">
             <div class="category-title">
                 <span>🎮 MAIN</span> <span>//テトリス</span>
             </div>
             <div class="category-buttons">
+                <a href="https://konita2222.github.io/tetris/" target="_blank" class="cyber-btn" style="border-color:#f0f;">🕹️ テトリス トップ</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.1.html" target="_blank" class="cyber-btn">🟦 tetris ver4.1</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.3.html" target="_blank" class="cyber-btn">🟩 tetris ver4.3</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.3.1.html" target="_blank" class="cyber-btn">⚡ tetris ver 4.4 (beta)</a>
             </div>
         </div>
 
-        <!-- カテゴリ: 学校 -->
         <div class="category">
             <div class="category-title">
                 <span>📚 SCHOOL</span> <span>//学習</span>
@@ -309,7 +316,6 @@
             </div>
         </div>
 
-        <!-- カテゴリ: ページまとめ (旧pages.htmlへの導線) -->
         <div class="category">
             <div class="category-title">
                 <span>📑 PAGE INDEX</span> <span>//まとめ</span>
@@ -326,19 +332,17 @@
 <main>
     <div class="welcome-text">
         💠 セキュリティ・プロトコル: 接続確立 :: ようこそ、ハッカーさん。<br>
-        上のカテゴリから各次元ゲートへアクセス可能です。<br>
+        上のカテゴリから各次元ゲートへアクセス可能です。上の「🔮 ALL」から表示の切り替えができます。<br>
         <span style="font-size:0.85rem; color:#8df;">🔗 すべてのリンクはネオン認証済み — 安全にアクセスできます。</span>
     </div>
 
-    <!-- すべてのページ: 全てのリンクをここにリスト表示 (下に動的表示のボタンで表示切替) -->
     <div id="allLinksContainer" style="margin-top: 10px; margin-bottom: 20px; background: #02102040; border-radius: 24px; padding: 12px 16px; border: 1px dashed #0ff; transition: 0.2s;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-            <span style="font-family: monospace; font-weight: bold; color:#0ff;">[ 📡 全リンク・カタログ ]</span>
+            <span style="font-family: monospace; font-weight: bold; color:#0ff;">[ 📡 <span id="catalogTitle">全リンク</span>・カタログ ]</span>
             <button id="toggleAllLinksBtn" class="cyber-btn" style="padding: 4px 12px;">🗂️ 表示/非表示</button>
         </div>
         <div id="fullLinksList" style="margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; font-size: 0.85rem;">
-            <!-- JavaScriptで動的に全リンクを挿入 -->
-        </div>
+            </div>
     </div>
 
     <hr>
@@ -357,22 +361,10 @@
 </main>
 
 <script>
-    // ============================================================
-    // 要求: 「すべて：以下の全てのページ」 に含まれるURL全リンクを一覧表示
-    // ツール, メイン, 学校, ページまとめ など + 旧来のコニタ内ページも保持してもいいが
-    // 「以下の全てのページ」とは今回指定されたすべてのリンク(google, tetris3種, classroom, まなびポケット, pages.html)
-    // さらに「ページまとめ」として存在するものも包括。ただし他には音楽？ 元ファイルの音楽ページなどは新規では不要だが
-    // 明確にするため、このサイトの核となる「以下の全てのページ」として: 
-    // Google, tetris-v4.1, tetris-v4.3, tetris-v4.3.1, Google Classroom, まなびポケット, ページ一覧(pages.html) 
-    // + ツール = googleのみだが重複を避けつつ全て一覧に表示。
-    // + さらに過去の「コニタ」など参照リンクは? 今回は簡潔に新仕様に合わせて表示します。
-    
-    // また「すべての以下のページ」ボタンを押した際に簡単に一覧がわかるよう上記コンテナで常時表示＋トグル。
-    // 別の解釈として「すべて」カテゴリにはすべてのリンクボタンを配置、さらに全リンクリストを表示。
-    
-    // 定義: 全てのリンク (配列)
+    // 定義: 全てのリンク (配列) ※追加項目「テトリス トップページ」を反映
     const allLinksData = [
         { name: "🔍 Google", url: "https://www.google.com", category: "ツール" },
+        { name: "🕹️ テトリス トップ", url: "https://konita2222.github.io/tetris/", category: "メイン" },
         { name: "🟦 tetris ver4.1", url: "https://konita2222.github.io/tetris/tetris-v4.1.html", category: "メイン" },
         { name: "🟩 tetris ver4.3", url: "https://konita2222.github.io/tetris/tetris-v4.3.html", category: "メイン" },
         { name: "⚡ tetris ver4.4 (beta)", url: "https://konita2222.github.io/tetris/tetris-v4.3.1.html", category: "メイン" },
@@ -381,21 +373,23 @@
         { name: "📄 ページ一覧 (まとめ)", url: "https://konita2222.github.io/konita2222/pages.html", category: "ページまとめ" }
     ];
     
-    // 元ファイルにあった konita.html, tetris, music, link, pages, next, next-bot 等を「すべてのページ」に含めるべきか？
-    // 「以下の全てのページ」として新しいリンク群を最優先。ただし「すべて」の概念としてユーザーが旧コンテンツも含めるかもしれないが
-    // 要件を厳密に満たすため、要求されたリンク分類をそのまま全ての対象とする。旧コンテンツ（音楽, konita 個別など）は非表示にし、
-    // 純粋に新しいサイバーサイトとしてのリンクのみ動作させる。しかしユーザーの体験のためにコニタサイトらしさを残すなら？
-    // 指定のリンク分類以外にも、将来的に活用しても良いが今回の全てのリンクはこれで完全網羅。
-    
-    // ただし「すべて：以下の全てのページ」とは表示された全リンク群のほか、他にも「すべて」専用ボタンで一覧する事と定義。
-    // 更に「ページまとめ」にあるpages.htmlに遷移すれば旧一覧も参照可能なので矛盾なし。
-    
-    // 動的に全リンクリストを描写
-    function renderFullLinksList() {
+    // 現在選択されているカテゴリーの保持（初期値は全部）
+    let currentFilter = "全部";
+
+    // 動的に全リンクリストを描写（フィルター機能付き）
+    function renderFullLinksList(filter = "全部") {
         const container = document.getElementById("fullLinksList");
+        const titleSpan = document.getElementById("catalogTitle");
         if (!container) return;
         container.innerHTML = "";
-        allLinksData.forEach(link => {
+        
+        // タイトルテキストの更新
+        titleSpan.textContent = filter === "全部" ? "全リンク" : `カテゴリー [${filter}]`;
+
+        // 配列から条件に合うものを抽出
+        const filteredData = allLinksData.filter(link => filter === "全部" || link.category === filter);
+
+        filteredData.forEach(link => {
             const card = document.createElement("a");
             card.href = link.url;
             card.target = "_blank";
@@ -411,13 +405,9 @@
             card.innerHTML = `<span>${link.name}</span><span style="font-size:0.7rem; opacity:0.7;"> ➔ ${link.category}</span>`;
             container.appendChild(card);
         });
-        // ボーナス: 音楽ページや旧コニタページを追加で入れたい場合は追加可能だが指定外のため。
-        // 「すべて」に元の「音楽ページ」「コニタ」「テトリス」はすでにテトリス3種が含まれるが、音楽は別途音楽ファイルのみ。軽微なため無視可。
-        // もしmusicページを希望するなら旧来のリンク追加だがお好みで、しかし要件の分類以外はあえてしない。
     }
     
-    // トグル機能
-    let listVisible = true;
+    // トグル表示機能
     const toggleBtn = document.getElementById("toggleAllLinksBtn");
     const linksListDiv = document.getElementById("fullLinksList");
     const containerDiv = document.getElementById("allLinksContainer");
@@ -427,70 +417,48 @@
             if (linksListDiv.style.display === "none") {
                 linksListDiv.style.display = "grid";
                 toggleBtn.innerHTML = "🗂️ 折りたたむ";
-                listVisible = true;
             } else {
                 linksListDiv.style.display = "none";
-                toggleBtn.innerHTML = "🔽 全リンク表示";
-                listVisible = false;
+                toggleBtn.innerHTML = "🔽 表示する";
             }
         });
     }
     
-    // 「すべてのページ」ボタン 追加機能 → クリックしたら全リンクリストをスクロールして強調＋アラートで開くおまけ
-    const allPagesBtn = document.getElementById("allPagesBtn");
-    if (allPagesBtn) {
-        allPagesBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            // 全リンクコンテナを表示状態にして、ハイライト
+    // カテゴリーフィルターボタン群のイベント設定
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    filterButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const target = btn.getAttribute("data-target");
+            currentFilter = target;
+
+            // ボタンのアクティブクラス切り替え
+            filterButtons.forEach(b => b.classList.remove("filter-active"));
+            btn.classList.add("filter-active");
+
+            // リストを再描写してコンテナを表示状態にする
             if (linksListDiv && linksListDiv.style.display === "none") {
                 linksListDiv.style.display = "grid";
                 if(toggleBtn) toggleBtn.innerHTML = "🗂️ 折りたたむ";
             }
+            renderFullLinksList(target);
+
+            // カタログエリアへスマートスクロールしてネオン発光演出
             containerDiv.scrollIntoView({ behavior: "smooth", block: "center" });
             containerDiv.style.transition = "0.2s";
             containerDiv.style.boxShadow = "0 0 0 2px cyan, 0 0 15px magenta";
             setTimeout(() => {
                 if(containerDiv) containerDiv.style.boxShadow = "";
             }, 1000);
-            // 任意アクション: 表示済
         });
-    }
+    });
     
-    // さらにサイト内のナビゲーションとして旧indexにあった「ホーム」等の概念は要らないが
-    // タイトル下のカテゴリですべてを網羅し、もはや「トップページ」はこのサイバーインデックス。
-    // 必要なら「音楽ページ」をどこかに追加する？しかしBGMのaudioがあるので音楽ページは実質なしでOK。
-    // 旧 music.html 等のリンクは pagesまとめに任せる。
-
-    // 要求「以下のリンク分類を追加」：すべて、ツール、メイン、学校、ページまとめ を完全実装。
-    // メインには 3種テトリス, ツール google, 学校にclassroom/まなびポケット, ページまとめにpages.html。
-    // そして「すべて」カテゴリのもと「すべての以下のページ」機能 → 全リンク一覧表示かつ「すべてのページ」ボタン押下でフォーカス
-    
-    // なお、「すべて」ボタンとリンク集はしっかり機能。
-    // 重複しないよう全てのリンクは全リンクリストとカテゴリに重複。
-    // 旧 site の「リンク集」「Next」等は必要ならページまとめ(pages.html)に委譲。
-    // サイバー調: complete
-    
-    // また選択の補助: 全カテゴリのボタンはしっかりtarget="_blank"で動作。
-    
-    // 追加で「ページまとめ」内に既存pages.htmlで完全な旧ページ一覧が参照されるため万全。
-    // ユーザビリティのためにメインの「カテゴリボタン」はそのまま。
-    
-    // ドロップボックスリンクは以前存在したが新デザインでは削除（要件外）
-    // 同時にkonita.html, next.htmlなどはpages.htmlから利用可能。
-    
-    // さらにフッターなどにコピーライトは割愛、サイバー調を維持
-    
-    // すべてのページが開く動作確認: すべて外部リンクまたはkonita2222のgithub domainですべて有効。
-    // tetris-v4.3.1が ver4.4(beta)として動作。
-    
+    // 初回読み込み時のレンダリング
     renderFullLinksList();
     
-    // 最初からリンクリスト表示ONでスタート
     if(linksListDiv) linksListDiv.style.display = "grid";
     if(toggleBtn) toggleBtn.innerHTML = "🗂️ 折りたたむ";
     
-    // 加えて、ページ内のカテゴリボタンにホバー時の追加効果（スタイル済み）
-    // サイバー感を出すためにタイトル周りにmatrix風
+    // アクセシビリティ・選択の追加スタイル
     const styleGlow = document.createElement('style');
     styleGlow.textContent = `
         .cyber-btn:focus-visible {
@@ -504,9 +472,7 @@
     `;
     document.head.appendChild(styleGlow);
     
-    // 調整: 全リンクカテゴリに「すべての以下のページ」わかりやすく, 追加で各リンクにアイコン
-    // 無効リンクを防止。
-    console.log("CYBER MODE ACTIVE — 全リンク分類完了");
+    console.log("CYBER MODE ACTIVE — カテゴリ選択・通常スクロール・テトリストップ追加完了");
 </script>
 
 </body>
