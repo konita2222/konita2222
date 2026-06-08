@@ -7,7 +7,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- 既存のフォントに、ドット風フォント(DotGothic16)と日本語・中国語(簡体字)を追加 -->
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         /* ===== RESET & CYBER BASE ===== */
@@ -246,6 +247,224 @@
             color: #0ff8;
         }
 
+        /* ==================================================
+           🆕 UTSRU ABOUT SECTION (UNDERTALE STYLE)
+           ※既存のサイバーデザインと衝突しないようクラスを分けています
+           ================================================== */
+        .utsuro-section {
+            margin-top: 40px;
+            background: #000000;
+            border: 3px solid #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            font-family: 'DotGothic16', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        }
+
+        /* 独立した言語切り替え制御 */
+        .utsuro-lang-jp, .utsuro-lang-cn {
+            display: none;
+        }
+        
+        .lang-mode-jp .utsuro-lang-jp {
+            display: block;
+        }
+        .lang-mode-jp span.utsuro-lang-jp, 
+        .lang-mode-jp a.utsuro-lang-jp {
+            display: inline;
+        }
+        .lang-mode-jp tr.utsuro-lang-jp {
+            display: table-row;
+        }
+
+        .lang-mode-cn .utsuro-lang-cn {
+            display: block;
+        }
+        .lang-mode-cn span.utsuro-lang-cn, 
+        .lang-mode-cn a.utsuro-lang-cn {
+            display: inline;
+        }
+        .lang-mode-cn tr.utsuro-lang-cn {
+            display: table-row;
+        }
+
+        .utsuro-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #444444;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .utsuro-logo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .utsuro-lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .utsuro-lang-btn {
+            background: none;
+            border: 2px solid #555555;
+            color: #888888;
+            padding: 3px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .utsuro-lang-btn.active {
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        .utsuro-lang-btn:hover {
+            border-color: #FFD700; /* 黄色 */
+            color: #FFD700;
+        }
+
+        .utsuro-hero {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .utsuro-hero h2 {
+            font-size: 1.25rem;
+            font-weight: normal;
+            line-height: 1.8;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .utsuro-title {
+            font-size: 1.1rem;
+            border-left: 4px solid #00BFFF; /* 青 */
+            padding-left: 10px;
+            margin: 30px 0 15px 0;
+            font-weight: normal;
+            color: #ffffff;
+        }
+
+        .utsuro-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .utsuro-table th, .utsuro-table td {
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .utsuro-table th {
+            color: #FFD700; /* 黄 */
+            font-weight: normal;
+            width: 35%;
+        }
+
+        .utsuro-table td {
+            border-bottom: 1px dashed #333333;
+            color: #ffffff;
+        }
+
+        .utsuro-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .utsuro-link-btn {
+            position: relative;
+            display: block;
+            padding: 12px 16px;
+            border: 2px solid #ffffff;
+            background-color: #000000;
+            color: #ffffff;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .utsuro-link-btn:hover {
+            color: #FFD700;
+            border-color: #00BFFF;
+        }
+
+        /* Undertale風のソウル演出 */
+        .utsuro-link-btn::before {
+            content: "♥";
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e52521;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: left 0.2s ease, opacity 0.2s ease;
+        }
+
+        .utsuro-link-btn:hover::before {
+            left: 12px;
+            opacity: 1;
+        }
+
+        .utsuro-btn-inner {
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+        .utsuro-link-btn:hover .utsuro-btn-inner {
+            transform: translateX(18px);
+        }
+
+        .utsuro-link-title {
+            font-size: 1rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .utsuro-link-desc {
+            font-size: 0.75rem;
+            color: #888888;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .utsuro-link-btn:hover .utsuro-link-desc {
+            color: #FFD700;
+        }
+
+        .utsuro-footer {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.75rem;
+            color: #555555;
+            border-top: 1px dashed #333333;
+            margin-top: 30px;
+        }
+
+        .utsuro-heart {
+            color: #e52521;
+            display: inline-block;
+            animation: utsuro-pulse 1s infinite alternate;
+        }
+
+        @keyframes utsuro-pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 760px) {
             .nav-grid {
                 gap: 16px;
@@ -263,6 +482,9 @@
             .cyber-btn {
                 padding: 6px 12px;
                 font-size: 0.7rem;
+            }
+            .utsuro-section {
+                padding: 16px;
             }
         }
     </style>
@@ -334,7 +556,7 @@
 
 <main>
     <div class="welcome-text">
-        💠 セキュリティ・プロトコル: 接続確立 :: ようこそ、ハッカーさん。<br>
+        💠 セキュリティ・プロトコール: 接続確立 :: ようこそ、ハッカーさん。<br>
         上の「🔮 ALL」で下のデジタルカタログをカテゴリー別に高速フィルタリングできます。<br>
         <span style="font-size:0.85rem; color:#8df;">🔗 すべてのリンクはネオン認証済み — 安全にアクセスできます。</span>
     </div>
@@ -345,7 +567,7 @@
             <button id="toggleAllLinksBtn" class="cyber-btn" style="padding: 4px 12px;">🗂️ 表示/非表示</button>
         </div>
         <div id="fullLinksList" style="margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; font-size: 0.85rem;">
-            </div>
+        </div>
     </div>
 
     <hr>
@@ -357,6 +579,102 @@
             お使いのブラウザではオーディエンスに対応していません。
         </audio>
     </div>
+
+    <!-- ==================================================
+       🆕 ここから自己紹介（Hacka Kola / 晦冥 虚）セクションを追加
+       ================================================== -->
+    <div class="utsuro-section lang-mode-jp" id="utsuroSection">
+        <div class="utsuro-header">
+            <div class="utsuro-logo">Hacka Kola / 晦冥 虚</div>
+            <div class="utsuro-lang-switch">
+                <button class="utsuro-lang-btn active" id="utsuro-btn-jp" onclick="switchUtsuroLang('jp')">JP</button>
+                <span style="color: #444444;">|</span>
+                <button class="utsuro-lang-btn" id="utsuro-btn-cn" onclick="switchUtsuroLang('cn')">CN</button>
+            </div>
+        </div>
+
+        <div class="utsuro-hero">
+            <h2 class="utsuro-lang-jp">こんにちは、虚です。<br>音楽とゲームが好き。</h2>
+            <h2 class="utsuro-lang-cn">你好，我是虚。<br>喜欢音乐和游戏。</h2>
+        </div>
+
+        <h3 class="utsuro-title">
+            <span class="utsuro-lang-jp">プロフィール</span>
+            <span class="utsuro-lang-cn">关于我</span>
+        </h3>
+        <table class="utsuro-table">
+            <tr class="utsuro-lang-jp">
+                <th>名前</th>
+                <td>晦冥 虚 (Kaimei Utsuro)</td>
+            </tr>
+            <tr class="utsuro-lang-cn">
+                <th>名字</th>
+                <td>晦冥 虚 (Kaimei Utsuro)</td>
+            </tr>
+            <tr class="utsuro-lang-jp">
+                <th>学年</th>
+                <td>中学2年生</td>
+            </tr>
+            <tr class="utsuro-lang-cn">
+                <th>年级</th>
+                <td>初二学生</td>
+            </tr>
+            <tr>
+                <th>
+                    <span class="utsuro-lang-jp">誕生日</span>
+                    <span class="utsuro-lang-cn">生日</span>
+                </th>
+                <td>5月8日</td>
+            </tr>
+            <tr>
+                <th>
+                    <span class="utsuro-lang-jp">活動名義</span>
+                    <span class="utsuro-lang-cn">活动名义</span>
+                </th>
+                <td>
+                    <span class="utsuro-lang-jp">作曲: 薄荷可乐 (Hacka Kola)</span>
+                    <span class="utsuro-lang-cn">作曲: 薄荷可乐 (Hacka Kola)</span>
+                </td>
+            </tr>
+            <tr class="utsuro-lang-jp">
+                <th>趣味</th>
+                <td>ハードグミ, Undertale, 作曲</td>
+            </tr>
+            <tr class="utsuro-lang-cn">
+                <th>兴趣</th>
+                <td>硬糖, Undertale, 作曲</td>
+            </tr>
+        </table>
+
+        <h3 class="utsuro-title">
+            <span class="utsuro-lang-jp">リンク</span>
+            <span class="utsuro-lang-cn">链接</span>
+        </h3>
+        <div class="utsuro-links">
+            <a href="https://linktr.ee/nextzzz2w22" target="_blank" rel="noopener" class="utsuro-link-btn">
+                <span class="utsuro-btn-inner">
+                    <span class="utsuro-link-title">🌳 Linktree</span>
+                    <span class="utsuro-link-desc utsuro-lang-jp">すべてのリンクはこちら</span>
+                    <span class="utsuro-link-desc utsuro-lang-cn">所有链接都在这里</span>
+                </span>
+            </a>
+            <a href="https://www.youtube.com/@nextzzz2w22" target="_blank" rel="noopener" class="utsuro-link-btn">
+                <span class="utsuro-btn-inner">
+                    <span class="utsuro-link-title">▶️ YouTube</span>
+                    <span class="utsuro-link-desc utsuro-lang-jp">動画をチェック</span>
+                    <span class="utsuro-link-desc utsuro-lang-cn">观看视频</span>
+                </span>
+            </a>
+        </div>
+
+        <div class="utsuro-footer">
+            <p>© 2026 Hacka Kola <span class="utsuro-heart">♥</span></p>
+        </div>
+    </div>
+    <!-- ==================================================
+       🆕 追加セクションここまで
+       ================================================== -->
+
     <div class="footer-glow">
         <span>✦ サイバー領域 ✦ すべてのデータは暗号化済み ✦</span>
     </div>
@@ -442,6 +760,23 @@
     
     renderFullLinksList();
     if(linksListDiv) linksListDiv.style.display = "grid";
+
+    // 🆕 自己紹介セクション用の言語切り替えJS
+    function switchUtsuroLang(lang) {
+        const section = document.getElementById('utsuroSection');
+        if (section) {
+            section.className = 'utsuro-section lang-mode-' + lang;
+        }
+        
+        document.querySelectorAll('.utsuro-lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        const activeBtn = document.getElementById('utsuro-btn-' + lang);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
 </script>
 </body>
 </html>
