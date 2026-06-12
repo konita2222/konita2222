@@ -19,7 +19,7 @@
         }
 
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0f1f, #03050b);
+            background: radial-gradient(circle at 20% 30%, #050a18, #010205);
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
             color: #d0e4ff;
             line-height: 1.5;
@@ -64,12 +64,11 @@
 
         /* ===== ヘッダー / ネオンガラス (固定解除・通常スクロール) ===== */
         header {
-            background: rgba(5, 10, 25, 0.75);
-            backdrop-filter: blur(12px);
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(16px);
             border-bottom: 2px solid #0ff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-            padding: 20px 24px;
-            /* position: sticky; を解除して通常スクロールへ */
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+            padding: 24px 24px;
             position: relative;
             z-index: 30;
         }
@@ -80,31 +79,35 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 24px;
-            row-gap: 24px;
+            gap: 20px;
         }
 
+        /* 改良：シャープなサイバー角（多角形カット）のカテゴリーパネル */
         .category {
-            background: rgba(0, 20, 40, 0.6);
+            background: rgba(4, 12, 30, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.2);
             border-left: 4px solid #0ff;
-            padding: 12px 20px;
-            border-radius: 18px;
-            backdrop-filter: blur(4px);
-            min-width: 200px;
+            padding: 16px 20px;
+            border-radius: 2px;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            backdrop-filter: blur(8px);
+            min-width: 210px;
             flex: 1 1 240px;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
         }
 
         .category:hover {
             border-left-color: #f0f;
-            box-shadow: 0 0 12px #f0f4;
-            background: rgba(0, 30, 50, 0.7);
+            border-color: rgba(255, 0, 255, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+            transform: translateY(-2px);
         }
 
         .category-title {
             font-family: 'JetBrains Mono', monospace;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1rem;
             letter-spacing: 2px;
             margin-bottom: 12px;
             color: #0ff;
@@ -112,8 +115,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            border-bottom: 1px dashed #0ff8;
-            padding-bottom: 5px;
+            border-bottom: 1px dashed rgba(0, 255, 255, 0.4);
+            padding-bottom: 6px;
         }
 
         .category-buttons {
@@ -123,32 +126,33 @@
             margin-top: 10px;
         }
 
-        /* サイバーボタン */
+        /* サイバーボタン (シャープ化) */
         .cyber-btn {
-            background: linear-gradient(135deg, #10182f, #050a15);
+            background: linear-gradient(135deg, #091024, #030610);
             border: 1px solid #0ff;
             color: #b3f0ff;
             padding: 8px 14px;
-            border-radius: 28px;
+            border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 600;
             font-family: 'Inter', monospace;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             backdrop-filter: blur(2px);
             letter-spacing: 0.5px;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
         }
 
         .cyber-btn:hover {
-            background: #0ff2;
+            background: rgba(0, 255, 255, 0.1);
             border-color: #f0f;
             color: white;
-            box-shadow: 0 0 10px #0ff8;
-            transform: translateY(-2px);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            transform: translateY(-1px);
         }
 
         .cyber-btn:active {
@@ -157,21 +161,38 @@
 
         /* フィルターボタン専用カラー */
         .btn-all {
-            background: linear-gradient(95deg, #0a1a3a, #120b2a);
+            background: linear-gradient(95deg, #061430, #100624);
             border-color: #f0f;
             color: #f9f;
-            box-shadow: 0 0 6px #f0f6;
         }
         .btn-all:hover {
-            border-color: #ff44ff;
-            background: #f0f1a;
+            border-color: #ff55ff;
+            background: rgba(255, 0, 255, 0.1);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
         }
         
+        /* アクティブな項目選択 (極小LED点滅インジケータ付き) */
         .cyber-btn.filter-active {
-            background: #f0f3;
+            background: rgba(255, 0, 255, 0.18);
             border-color: #f0f;
             color: #fff;
-            box-shadow: 0 0 12px #f0f;
+            box-shadow: 0 0 12px rgba(255, 0, 255, 0.5);
+        }
+        .cyber-btn.filter-active::after {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background: #00ff66;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 4px;
+            box-shadow: 0 0 8px #00ff66;
+            animation: pulse-led 0.8s infinite alternate;
+        }
+
+        @keyframes pulse-led {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
         /* タイトル */
@@ -185,7 +206,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 15px #0ff8;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
             animation: flicker 3s infinite;
         }
 
@@ -199,13 +220,14 @@
         main {
             max-width: 1000px;
             margin: 30px auto 60px;
-            background: rgba(8, 12, 28, 0.7);
+            background: rgba(4, 8, 20, 0.8);
             backdrop-filter: blur(12px);
-            border-radius: 40px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.1);
             padding: 28px 32px;
             transition: 0.3s;
+            clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
         }
 
         .welcome-text {
@@ -213,7 +235,7 @@
             margin-bottom: 24px;
             border-left: 3px solid #0ff;
             padding-left: 20px;
-            background: linear-gradient(90deg, #0ff0a, transparent);
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), transparent);
         }
 
         hr {
@@ -223,12 +245,38 @@
             background: linear-gradient(90deg, #0ff, #f0f, transparent);
         }
 
+        /* 改良：リンクカタログのモジュールカードスタイル */
+        .cyber-card {
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(6, 15, 35, 0.8) !important;
+            border: 1px solid rgba(0, 255, 255, 0.3) !important;
+            border-left: 3px solid #0ff !important;
+            padding: 10px 16px !important;
+            border-radius: 0px !important;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            color: #b3f0ff !important;
+            font-weight: 500;
+        }
+
+        .cyber-card:hover {
+            border-color: #f0f !important;
+            border-left-color: #f0f !important;
+            color: #fff !important;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.4) !important;
+            transform: translateX(4px);
+        }
+
         .music-area {
-            background: #050c1a80;
-            border-radius: 28px;
+            background: rgba(3, 8, 20, 0.7);
+            border-radius: 8px;
             padding: 18px 20px;
             margin-top: 15px;
-            border: 1px solid cyan;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
         }
 
         audio {
@@ -236,7 +284,7 @@
             max-width: 450px;
             filter: drop-shadow(0 0 6px cyan);
             background: #000000aa;
-            border-radius: 40px;
+            border-radius: 4px;
         }
 
         .footer-glow {
@@ -247,19 +295,17 @@
             color: #0ff8;
         }
 
-        /* ==================================================
-           🆕 UTSRU ABOUT SECTION (UNDERTALE STYLE)
-           ※既存のサイバーデザインと衝突しないようクラスを分けています
-           ================================================== */
+        /* ===== UTSRU ABOUT SECTION ===== */
         .utsuro-section {
             margin-top: 40px;
             background: #000000;
             border: 3px solid #ffffff;
-            border-radius: 20px;
+            border-radius: 4px;
             padding: 24px;
             font-family: 'DotGothic16', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
             color: #ffffff;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
         }
 
         /* 独立した言語切り替え制御 */
@@ -328,7 +374,7 @@
         }
 
         .utsuro-lang-btn:hover {
-            border-color: #FFD700; /* 黄色 */
+            border-color: #FFD700;
             color: #FFD700;
         }
 
@@ -347,7 +393,7 @@
 
         .utsuro-title {
             font-size: 1.1rem;
-            border-left: 4px solid #00BFFF; /* 青 */
+            border-left: 4px solid #00BFFF;
             padding-left: 10px;
             margin: 30px 0 15px 0;
             font-weight: normal;
@@ -367,7 +413,7 @@
         }
 
         .utsuro-table th {
-            color: #FFD700; /* 黄 */
+            color: #FFD700;
             font-weight: normal;
             width: 35%;
         }
@@ -464,6 +510,185 @@
             100% { transform: scale(1.15); }
         }
 
+        /* ==================================================
+           🆕 TETRIS DRAWER & FLOAT BUTTON (テトリス詳細サイドパネル)
+           ================================================== */
+        .cyber-float-btn {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 99;
+            background: rgba(3, 8, 24, 0.9);
+            border: 2px solid #0ff;
+            color: #0ff;
+            padding: 12px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+
+        .cyber-float-btn:hover {
+            color: #fff;
+            border-color: #f0f;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.3);
+            transform: scale(1.05) translateY(-3px);
+        }
+
+        /* ボタン内の光の走るエフェクト */
+        .cyber-float-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.6s;
+            transform: skewX(-25deg);
+        }
+
+        .cyber-float-btn:hover::before {
+            left: 150%;
+        }
+
+        /* サイドドロワー本体 */
+        .cyber-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 380px;
+            max-width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 16, 0.96);
+            backdrop-filter: blur(20px);
+            border-left: 3px solid #0ff;
+            box-shadow: -10px 0 35px rgba(0, 0, 0, 0.9), -5px 0 20px rgba(0, 255, 255, 0.15);
+            z-index: 1000;
+            transform: translateX(105%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            font-family: 'JetBrains Mono', 'Noto Sans JP', sans-serif;
+        }
+
+        .cyber-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .drawer-title {
+            color: #0ff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .drawer-close {
+            background: transparent;
+            border: 1px solid #f0f;
+            color: #f0f;
+            font-size: 1.4rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+        }
+
+        .drawer-close:hover {
+            background: rgba(255, 0, 255, 0.15);
+            color: #fff;
+            box-shadow: 0 0 10px #f0f;
+        }
+
+        .drawer-body {
+            padding: 24px;
+            flex: 1;
+            overflow-y: auto;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #bdf;
+        }
+
+        .status-indicator {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #0f0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .blink {
+            animation: blink-anim 1s infinite alternate;
+        }
+
+        @keyframes blink-anim {
+            0% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+
+        .drawer-section {
+            margin-bottom: 24px;
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px dashed rgba(0, 255, 255, 0.15);
+            padding: 16px;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+
+        .drawer-section h4 {
+            color: #f0f;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+            padding-bottom: 4px;
+        }
+
+        .drawer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .drawer-section li {
+            margin-bottom: 10px;
+            font-size: 0.82rem;
+        }
+
+        .control-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .control-table th, .control-table td {
+            padding: 8px 4px;
+            font-size: 0.82rem;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .control-table th {
+            text-align: left;
+            color: #0ff;
+            width: 40%;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 760px) {
             .nav-grid {
@@ -486,6 +711,9 @@
             .utsuro-section {
                 padding: 16px;
             }
+            .cyber-drawer {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -495,7 +723,7 @@
     <div class="nav-grid">
         <div class="category">
             <div class="category-title">
-                <span>🔮 ALL</span> <span style="font-size:0.75rem;">//カテゴリー選別</span>
+                <span>🔮 ALL</span> <span style="font-size:0.7rem; opacity: 0.7;">//カテゴリー選別</span>
             </div>
             <div class="category-buttons">
                 <button class="cyber-btn btn-all filter-btn filter-active" data-target="全部">🌐 すべて表示</button>
@@ -508,7 +736,7 @@
 
         <div class="category">
             <div class="category-title">
-                <span>🛠️ TOOLS</span> <span>//ツール</span>
+                <span>🛠️ TOOLS</span> <span style="font-size:0.7rem; opacity: 0.7;">//ツール</span>
             </div>
             <div class="category-buttons">
                 <a href="https://www.google.com" target="_blank" class="cyber-btn">🔍 Google</a>
@@ -519,20 +747,22 @@
 
         <div class="category">
             <div class="category-title">
-                <span>🎮 MAIN</span> <span>//テトリス</span>
+                <span>🎮 MAIN</span> <span style="font-size:0.7rem; opacity: 0.7;">//テトリス</span>
             </div>
             <div class="category-buttons">
                 <a href="https://konita2222.github.io/tetris/" target="_blank" class="cyber-btn" style="border-color:#f0f;">🕹️ テトリス トップ</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.1.html" target="_blank" class="cyber-btn">🟦 tetris ver4.1</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.3.html" target="_blank" class="cyber-btn">🟩 tetris ver4.3</a>
                 <a href="https://konita2222.github.io/tetris/tetris-v4.4.html" target="_blank" class="cyber-btn" style="box-shadow: 0 0 8px rgba(0, 255, 255, 0.6);">🔥 tetris ver4.4</a>
-                <a href="https://konita2222.github.io/tetris/tetris-v4.3.1.html" target="_blank" class="cyber-btn" style="opacity: 0.7;">⚡ ver 4.4 (beta)</a>
+                <!-- 🆕 v4.4.5 (beta) ボタン追加 -->
+                <a href="https://konita2222.github.io/tetris/tetris-v4.4.5.html" target="_blank" class="cyber-btn" style="border-color:#ff007f; box-shadow: 0 0 8px rgba(255, 0, 127, 0.6);">💥 v4.4.5 (beta)</a>
+                <a href="https://konita2222.github.io/tetris/tetris-v4.3.1.html" target="_blank" class="cyber-btn" style="opacity: 0.7;">⚡ v4.3.1 (beta)</a>
             </div>
         </div>
 
         <div class="category">
             <div class="category-title">
-                <span>📚 SCHOOL</span> <span>//学習</span>
+                <span>📚 SCHOOL</span> <span style="font-size:0.7rem; opacity: 0.7;">//学習</span>
             </div>
             <div class="category-buttons">
                 <a href="https://classroom.google.com/h" target="_blank" class="cyber-btn">📖 Classroom</a>
@@ -543,7 +773,7 @@
 
         <div class="category">
             <div class="category-title">
-                <span>📑 PAGE INDEX</span> <span>//まとめ</span>
+                <span>📑 PAGE INDEX</span> <span style="font-size:0.7rem; opacity: 0.7;">//まとめ</span>
             </div>
             <div class="category-buttons">
                 <a href="https://konita2222.github.io/konita2222/pages.html" target="_blank" class="cyber-btn">📄 ページ一覧 (まとめ)</a>
@@ -561,7 +791,7 @@
         <span style="font-size:0.85rem; color:#8df;">🔗 すべてのリンクはネオン認証済み — 安全にアクセスできます。</span>
     </div>
 
-    <div id="allLinksContainer" style="margin-top: 10px; margin-bottom: 20px; background: #02102040; border-radius: 24px; padding: 16px; border: 1px dashed #0ff;">
+    <div id="allLinksContainer" style="margin-top: 10px; margin-bottom: 20px; background: #02102040; border-radius: 4px; padding: 16px; border: 1px dashed #0ff; clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
             <span style="font-family: monospace; font-weight: bold; color:#0ff;">[ 📡 <span id="catalogTitle">全リンク</span>・カタログ ]</span>
             <button id="toggleAllLinksBtn" class="cyber-btn" style="padding: 4px 12px;">🗂️ 表示/非表示</button>
@@ -581,7 +811,7 @@
     </div>
 
     <!-- ==================================================
-       🆕 ここから自己紹介（Hacka Kola / 晦冥 虚）セクションを追加
+       自己紹介（Hacka Kola / 晦冥 虚）セクション
        ================================================== -->
     <div class="utsuro-section lang-mode-jp" id="utsuroSection">
         <div class="utsuro-header">
@@ -638,7 +868,7 @@
             </tr>
             <tr class="utsuro-lang-jp">
                 <th>趣味</th>
-                <td>ハードグミ, Undertale, 作曲</td>
+                <td>ハードグミ, Undertale, 作律</td>
             </tr>
             <tr class="utsuro-lang-cn">
                 <th>兴趣</th>
@@ -671,14 +901,62 @@
             <p>© 2026 Hacka Kola <span class="utsuro-heart">♥</span></p>
         </div>
     </div>
-    <!-- ==================================================
-       🆕 追加セクションここまで
-       ================================================== -->
 
     <div class="footer-glow">
         <span>✦ サイバー領域 ✦ すべてのデータは暗号化済み ✦</span>
     </div>
 </main>
+
+<!-- ==================================================
+   TETRIS DRAWER & FLOAT BUTTON (テトリス詳細サイドパネル)
+   ================================================== -->
+<div id="tetrisDrawer" class="cyber-drawer">
+    <div class="drawer-header">
+        <span class="drawer-title">🕹️ TETRIS SYSTEM INFO</span>
+        <button id="closeDrawerBtn" class="drawer-close" title="閉じる">&times;</button>
+    </div>
+    <div class="drawer-body">
+        <div class="status-indicator">
+            <span class="blink">●</span> SYSTEM PORT: ONLINE
+        </div>
+        
+        <p style="margin-bottom: 20px;">
+            当サイトで公開されているテトリスは、HTML5/JavaScriptで実装された高性能・高速パズルゲームです。
+        </p>
+
+        <div class="drawer-section">
+            <h4>[ 📂 VERSION ARCHIVES ]</h4>
+            <ul>
+                <!-- 🆕 ver4.4.5 (beta) の情報を追加 -->
+                <li><strong>ver4.4.5 (beta)</strong>: REN(連)システム、およびBack-to-Back(B2B)システムを実装した実験的先行モジュール。</li>
+                <li><strong>ver4.4 (最新安定版)</strong>: 各種レンダリングの最適化とエフェクト向上。</li>
+                <li><strong>ver4.3</strong>: スコアシステムと落下アルゴリズムの調整版。</li>
+                <li><strong>ver4.1</strong>: 軽量なコア・モジュール。</li>
+                <li><strong>ver4.3.1 (beta)</strong>: 次期アップデート向けのテストビルド。</li>
+            </ul>
+        </div>
+
+        <div class="drawer-section">
+            <h4>[ 🎮 CONTROLS ]</h4>
+            <table class="control-table">
+                <tr><th>← / →</th><td>ブロック左右移動</td></tr>
+                <tr><th>↑ (矢印上)</th><td>右回転 (時計回り)</td></tr>
+                <tr><th>↓ (矢印下)</th><td>ソフトドロップ (低速落下)</td></tr>
+                <tr><th>Space</th><td>ハードドロップ (一瞬で落とす)</td></tr>
+                <tr><th>C (キー)</th><td>ホールド (ブロックキープ)</td></tr>
+            </table>
+        </div>
+
+        <p style="font-size: 0.75rem; color: #0ffa; text-align: center; margin-top: 30px;">
+            // プレイするには「MAIN」から対象バージョンを選択してください。
+        </p>
+    </div>
+</div>
+
+<!-- 画面端の小さなサイバー・フローティングボタン -->
+<button id="openDrawerBtn" class="cyber-float-btn" title="テトリスについて">
+    <span>🕹️ ABOUT TETRIS</span>
+</button>
 
 <script>
     // データ定義
@@ -690,6 +968,8 @@
         { name: "🟦 tetris ver4.1", url: "https://konita2222.github.io/tetris/tetris-v4.1.html", category: "メイン" },
         { name: "🟩 tetris ver4.3", url: "https://konita2222.github.io/tetris/tetris-v4.3.html", category: "メイン" },
         { name: "🔥 tetris ver4.4 (最新版)", url: "https://konita2222.github.io/tetris/tetris-v4.4.html", category: "メイン" },
+        // 🆕 v4.4.5 のデータをカタログ定義に追加
+        { name: "💥 tetris v4.4.5 (beta/REN & B2B)", url: "https://konita2222.github.io/tetris/tetris-v4.4.5.html", category: "メイン" },
         { name: "⚡ tetris ver4.3.1 (beta)", url: "https://konita2222.github.io/tetris/tetris-v4.3.1.html", category: "メイン" },
         { name: "📖 Google Classroom", url: "https://classroom.google.com/h", category: "学校" },
         { name: "📘 まなびポケット", url: "https://ed-cl.com/dashboard", category: "学校" },
@@ -710,13 +990,7 @@
             const card = document.createElement("a");
             card.href = link.url;
             card.target = "_blank";
-            card.className = "cyber-btn";
-            card.style.display = "flex";
-            card.style.justifyContent = "space-between";
-            card.style.background = "#07122acc";
-            card.style.border = "1px solid #2af";
-            card.style.padding = "8px 14px";
-            card.style.borderRadius = "30px";
+            card.className = "cyber-card";
             card.innerHTML = `<span>${link.name}</span><span style="font-size:0.7rem; opacity:0.7;"> ➔ ${link.category}</span>`;
             container.appendChild(card);
         });
@@ -761,7 +1035,7 @@
     renderFullLinksList();
     if(linksListDiv) linksListDiv.style.display = "grid";
 
-    // 🆕 自己紹介セクション用の言語切り替えJS
+    // 自己紹介セクション用の言語切り替えJS
     function switchUtsuroLang(lang) {
         const section = document.getElementById('utsuroSection');
         if (section) {
@@ -776,6 +1050,31 @@
         if (activeBtn) {
             activeBtn.classList.add('active');
         }
+    }
+
+    // テトリス情報ドロワー制御
+    const drawer = document.getElementById("tetrisDrawer");
+    const openBtn = document.getElementById("openDrawerBtn");
+    const closeBtn = document.getElementById("closeDrawerBtn");
+
+    if(openBtn && drawer && closeBtn) {
+        openBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            drawer.classList.add("open");
+        });
+
+        closeBtn.addEventListener("click", () => {
+            drawer.classList.remove("open");
+        });
+
+        // ドロワーの外側をクリックした時に閉じる処理
+        document.addEventListener("click", (e) => {
+            if (drawer.classList.contains("open")) {
+                if (!drawer.contains(e.target) && !openBtn.contains(e.target)) {
+                    drawer.classList.remove("open");
+                }
+            }
+        });
     }
 </script>
 </body>
