@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Video Player</title>
+    <style>
+        /* 全体の背景と初期設定 */
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #f8fafc;
+            overflow: hidden;
+        }
+
+        /* 背後にあるネオンの光（アンビエント効果） */
+        .ambient-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 100%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1;
+            filter: blur(40px);
+        }
+
+        /* プレイヤー外枠（グラスモフィズム: 半透明グラス風デザイン） */
+        .player-card {
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            max-width: 800px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(139, 92, 246, 0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* フェードインアニメーション */
+        @keyframes fadeInUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ヘッダーデザイン */
+        .player-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 稼働中を示す点滅ランプ */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .player-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        /* 枠外装飾：閉じボタン等のモックアップ */
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* レスポンシブ対応の動画コンテナ */
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9; /* 16:9の比率を維持 */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* ホバー時のソフトな光彩変化 */
+        .video-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        /* iframeの引き伸ばし設定 */
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* フッター部分のデザイン */
+        .player-footer {
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 背後のネオンエフェクト -->
+    <div class="ambient-glow"></div>
+
+    <!-- メインプレイヤーカード -->
+    <div class="player-card">
+        
+        <!-- 上部ヘッダー部 -->
+        <div class="player-header">
+            <div class="title-group">
+                <div class="status-dot"></div>
+                <div class="player-title">SKIPVIDS NETWORK PLAYER</div>
+            </div>
+            <div class="window-controls">
+                <div class="window-dot"></div>
+                <div class="window-dot"></div>
+                <div class="window-dot"></div>
+            </div>
+        </div>
+
+        <!-- 動画再生部（ご提示いただいたiframe） -->
+        <div class="video-container">
+            <iframe 
+                src="https://skipvids.com/embed/KgayxOF4Y7E" 
+                title="SkipVids video player" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <!-- 下部フッター情報部 -->
+        <div class="player-footer">
+            <span>ID: KgayxOF4Y7E</span>
+            <span class="tag">ONLINE MODE</span>
+        </div>
+
+    </div>
+
+</body>
+</html>
