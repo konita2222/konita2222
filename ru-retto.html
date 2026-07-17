@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スマート抽選ツール</title>
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin-top: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* 設定画面 */
+    .setup-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex-grow: 1;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+
+    .item-list-container {
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .item-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .input-name {
+      flex: 2;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-name:focus {
+      border-color: var(--primary-color);
+    }
+
+    .input-weight-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .input-weight {
+      width: 100%;
+      padding: 10px 24px 10px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .input-weight-unit {
+      position: absolute;
+      right: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-add {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px dashed var(--border-color);
+    }
+
+    .btn-add:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-remove {
+      background-color: #fee2e2;
+      color: #ef4444;
+      padding: 10px;
+    }
+
+    .btn-remove:hover {
+      background-color: #fca5a5;
+    }
+
+    /* 演出設定 */
+    .option-group {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 16px;
+    }
+
+    .radio-container {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-generate {
+      background-color: var(--primary-color);
+      color: white;
+      margin-top: auto;
+      padding: 12px;
+    }
+
+    .btn-generate:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* 抽選画面 */
+    .play-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+      gap: 24px;
+    }
+
+    /* ディスプレイ（スロット表示領域） */
+    .display-box {
+      width: 100%;
+      height: 150px;
+      background-color: #0f172a; /* 液晶をイメージした暗い背景 */
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.4);
+      border: 4px solid #334155;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display-text {
+      color: #38bdf8; /* サイバー風の水色 */
+      font-size: 2.5rem;
+      font-weight: 800;
+      text-align: center;
+      word-break: break-all;
+      transition: color 0.1s;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    /* 当選確定時の演出アニメーション */
+    .display-text.winner {
+      color: #34d399; /* 成功の緑色 */
+      text-shadow: 0 0 15px rgba(52, 211, 153, 0.7);
+      animation: pop 0.4s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.85); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1.0); }
+    }
+
+    .btn-spin {
+      background-color: var(--primary-color);
+      color: white;
+      width: 100%;
+      max-width: 240px;
+      padding: 14px;
+      font-size: 1.1rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-spin:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-spin:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* フッター */
+    footer {
+      width: 100%;
+      max-width: 480px;
+      margin-top: auto;
+      padding: 16px 0;
+      font-size: 0.6rem;
+      color: #f1f5f9; /* 背景に馴染ませた極めて薄い灰色 */
+      opacity: 0.35;
+      text-align: center;
+      line-height: 1.4;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 id="title">デジタル抽選ツール</h1>
+      <p id="subtitle" class="subtitle">項目と割り振る割合を入力してください</p>
+    </header>
+
+    <!-- 設定画面 -->
+    <div id="setupScreen" class="setup-section">
+      <div class="section-title">項目一覧（任意の割合を数値で指定）</div>
+      <div id="itemList" class="item-list-container">
+        <!-- JSで入力フィールドを生成 -->
+      </div>
+      <button class="btn btn-add" onclick="addItem()">＋ 項目を追加</button>
+      
+      <!-- 焦らし演出の設定 -->
+      <div class="option-group">
+        <div class="section-title">演出パターン</div>
+        <div class="radio-container">
+          <label class="radio-label">
+            <input type="radio" name="effectType" value="instant" checked> 即座に決定
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="effectType" value="slow"> しばらく焦らす
+          </label>
+        </div>
+      </div>
+
+      <button class="btn btn-generate" onclick="finalizeSetup()">抽選機をロックする</button>
+    </div>
+
+    <!-- 抽選実行画面 -->
+    <div id="playScreen" class="play-section hidden">
+      <div class="display-box">
+        <div id="displayText" class="display-text">READY</div>
+      </div>
+      <button id="spinButton" class="btn btn-spin" onclick="spin()">スタート！</button>
+    </div>
+  </div>
+
+  <footer>
+    ※本アプリは演出用のジョークグッズ（いかさま抽選機）です。特定の条件設定が可能ですが、トラブルに関して一切の責任を負いかねます。
+  </footer>
+
+  <script>
+    // 初期項目データ
+    let items = [
+      { name: '大吉', weight: 10 },
+      { name: '中吉', weight: 30 },
+      { name: '吉', weight: 40 },
+      { name: '凶', weight: 20 }
+    ];
+    let totalWeight = 100;
+    let effectType = 'instant'; // デフォルト
+
+    // スロット切り替え速度の間隔（ミリ秒）
+    // 焦らし演出用：最初は高速で、徐々に間隔を広げて遅くしていく
+    const slowIntervals = [
+      30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+      40, 40, 40, 40, 40, 50, 60, 70, 80, 90, 100,
+      120, 140, 160, 180, 200, 250, 300, 350, 400, 500, 600, 800
+    ]; // 合計約5.4秒
+
+    // 即座決定用：一瞬だけババッと切り替わってすぐ止まる
+    const instantIntervals = [
+      40, 40, 60, 100, 150
+    ]; // 合計約0.4秒
+
+    let isSpinning = false;
+
+    // 設定画面の入力フィールド描画
+    function renderInputFields() {
+      const list = document.getElementById('itemList');
+      list.innerHTML = '';
+      items.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+          <input type="text" class="input-name" value="${escapeHtml(item.name)}" placeholder="項目名" oninput="updateItem(${index}, 'name', this.value)">
+          <div class="input-weight-wrapper">
+            <input type="number" class="input-weight" value="${item.weight}" placeholder="割合" min="0.1" step="any" oninput="updateItem(${index}, 'weight', this.value)">
+            <span class="input-weight-unit">%</span>
+          </div>
+          <button class="btn btn-remove" onclick="removeItem(${index})">✕</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function addItem() {
+      items.push({ name: '', weight: 10 });
+      renderInputFields();
+    }
+
+    function removeItem(index) {
+      if (items.length <= 2) {
+        alert('項目は最低2つ必要です。');
+        return;
+      }
+      items.splice(index, 1);
+      renderInputFields();
+    }
+
+    function updateItem(index, key, value) {
+      if (key === 'weight') {
+        items[index][key] = parseFloat(value) || 0;
+      } else {
+        items[index][key] = value;
+      }
+    }
+
+    // 設定完了後に抽選画面へ切り替え
+    function finalizeSetup() {
+      if (items.length < 2) {
+        alert('項目は2つ以上入力してください。');
+        return;
+      }
+      
+      for (let i = 0; i < items.length; i++) {
+        if (!items[i].name.trim()) {
+          alert('項目名をすべて入力してください。');
+          return;
+        }
+        if (isNaN(items[i].weight) || items[i].weight <= 0) {
+          alert('比率は0より大きい数値を入力してください。');
+          return;
+        }
+      }
+
+      totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+
+      // ラジオボタンの演出設定を取得
+      const selectedEffect = document.querySelector('input[name="effectType"]:checked');
+      effectType = selectedEffect ? selectedEffect.value : 'instant';
+
+      // タイトルの変更
+      document.getElementById('title').innerText = '抽選システム';
+      document.getElementById('subtitle').innerText = 'ボタンを押して抽選をおこないます';
+
+      // 画面切り替え（ロックされて戻れなくなる）
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('playScreen').classList.remove('hidden');
+
+      setDisplayText('READY');
+    }
+
+    // 文字盤にテキストを安全にセットし、文字数に応じてフォントサイズを縮小調整
+    function setDisplayText(text) {
+      const displayText = document.getElementById('displayText');
+      displayText.innerText = text;
+      
+      if (text.length > 10) {
+        displayText.style.fontSize = '1.3rem';
+      } else if (text.length > 6) {
+        displayText.style.fontSize = '1.8rem';
+      } else {
+        displayText.style.fontSize = '2.5rem';
+      }
+    }
+
+    // 抽選スタート
+    function spin() {
+      if (isSpinning) return;
+      isSpinning = true;
+
+      const spinButton = document.getElementById('spinButton');
+      const displayText = document.getElementById('displayText');
+      
+      spinButton.disabled = true;
+      displayText.classList.remove('winner');
+
+      // 1. 指定された比率（確率）から内部的な当選結果を先に算出
+      let r = Math.random() * totalWeight;
+      let winnerIndex = 0;
+      let accumulatedWeight = 0;
+      for (let i = 0; i < items.length; i++) {
+        accumulatedWeight += items[i].weight;
+        if (r <= accumulatedWeight) {
+          winnerIndex = i;
+          break;
+        }
+      }
+
+      // 2. 演出間隔の設定を選択
+      const intervals = effectType === 'instant' ? instantIntervals : slowIntervals;
+      let step = 0;
+
+      // 3. テキストのシャッフル処理
+      function tick() {
+        if (step < intervals.length) {
+          // シャッフル中はランダムに文字を切り替える
+          const tempIndex = Math.floor(Math.random() * items.length);
+          setDisplayText(items[tempIndex].name);
+
+          // スロット感を出すために少し文字を揺らす
+          displayText.style.transform = `scale(${0.92 + Math.random() * 0.12})`;
+
+          setTimeout(() => {
+            step++;
+            tick();
+          }, intervals[step]);
+        } else {
+          // 4. シャッフル完了時に当選した結果を確定表示
+          setDisplayText(items[winnerIndex].name);
+          displayText.style.transform = 'scale(1)';
+          displayText.classList.add('winner');
+          
+          spinButton.disabled = false;
+          isSpinning = false;
+        }
+      }
+
+      tick();
+    }
+
+    // 初期化
+    renderInputFields();
+  </script>
+</body>
+</html>
